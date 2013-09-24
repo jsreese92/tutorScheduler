@@ -3,6 +3,8 @@ Alright so here I'm going to attempt to put a tutorial oh how to set all this
 
 To link up to this repository execute the following commands:
 
+  -- git init 
+
   -- git remote add origin https://github.com/jsreese92/tutorScheduler.git
 
 Here's a great graphic that illustrates what I'm about to explain:
