@@ -1,3 +1,5 @@
+REMINDER: The first thing you should ALWAYS do is \<git pull origin master\>!
+
 Alright so here I'm going to attempt to put a tutorial oh how to set all this
   up as I go.
 
