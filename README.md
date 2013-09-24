@@ -16,9 +16,9 @@ To get the most recent versions of a repository, which you should ALWAYS do
 
 To upload (commit) a file to our repository execute the following commands:
 
-  -- git add <file to be commited>
+  -- git add \<file to be commited\>
 
-  -- git commit -m "<message explaining what you did>"
+  -- git commit -m "\<message explaining what you did\>"
 
   -- git push -u origin master
     (this pushes everything to github that you've committed to your local
