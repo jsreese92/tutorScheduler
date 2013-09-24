@@ -25,3 +25,8 @@ To upload (commit) a file to our repository execute the following commands:
   -- git push -u origin master
     (this pushes everything to github that you've committed to your local
       repository, check the graphic above if this seems weird.)
+
+Also, when in doubt, the following command may give you an idea on what you
+  need to do next:
+  
+  -- git status
