@@ -43,8 +43,8 @@ $sql="create table hoursByDay (
   PRIMARY KEY (PID),
   day VARCHAR(15), 
   h0 INT, h1 INT, h2 INT, h3 INT, h4 INT, h5 INT, h6 INT, h7 INT, h8 INT,
-  h9 INT, h10 INT, h11 INT, h12 INT, h13 INT, h14 INT, h15 INT, h16 INT
-  n17 INT, h18 INT, h19 INT, h20 INT, h21 INT, h22 INT, h21 INT)";
+  h9 INT, h10 INT, h11 INT, h12 INT, h13 INT, h14 INT, h15 INT, h16 INT,
+  n17 INT, h18 INT, h19 INT, h20 INT, h21 INT, h22 INT, h23 INT)";
 
 if (mysqli_query($con,$sql)){
   echo "Table hoursByDay created successfully \r\n";
