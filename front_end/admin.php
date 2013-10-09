@@ -16,7 +16,7 @@
 	<script type="text/javascript" src="admin_script.js"></script>
 </head>
 <body>
-	<form id="admin_form" action="admin_set_script.php" method="post">
+	<form id="admin_form" action="admin_submit_hours.php" method="post">
 		<div id="admin_div">
 		<table id="admin_table">
 			<thead>

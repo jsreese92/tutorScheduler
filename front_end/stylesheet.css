@@ -29,7 +29,7 @@ th, td {
 	background-color: black;
 }
 
-#admin_div {
+#admin_div, #request_div {
 	width: 50%;
 	margin: auto;
 	overflow: auto;

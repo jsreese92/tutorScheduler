@@ -1,10 +1,30 @@
 $(document).ready(function () {
-	//First, we'll set every <select> EXCEPT for the availability one to null, and before they submit we'll make sure
-	//	EVERY cell is filled.  We're also going to go ahead and hide every one.
-	$('select').not('#avail').each(function(i, e) {
-		var element = $(e);
-		element.val(null);
-		element.hide();
+	//First, we'll select every <td> EXCEPT for those with the 'na' class. We'll add a dropdown to each.
+	
+	$("table#requests_table td").not(".na").each(function(i, e) {
+		td = $(e);
+		var name = td.attr("id");
+		var dropdown = $("<select>");
+		dropdown.attr("name",name);
+		dropdown.append("<option value='0'>Busy</option>" +
+				"<option value='1'>Prefer Not</option>" +
+				"<option value='2'>Can Work</option>" +
+				"<option value='3'>Perfect</option>");
+		dropdown.hide();
+		
+		//now the dropdown is in place and has a name value of [td name], as in mon09
+		td.append(dropdown);
+		dropdown.val(null);
+		
+		//now let's check the database to see if it's closed during this shift
+		var day = name.substring(0,3);
+		var hour = name.substring(3,5);
+		
+		if($("tr#"+day+" td."+hour+"").html() == 'closed') {
+			td.append('Closed');
+			td.addClass('na');
+			dropdown.val(0);
+		}
 	});
 
 	//Next we'll set up a handler for when the submit button is clicked, to check that every cell has been filled
