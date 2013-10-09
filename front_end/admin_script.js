@@ -20,67 +20,6 @@ $(document).ready(function () {
 		}
 	});
 	
-	
-	/*
-	//Checking the default hours where the center is closed, and adding the closed attribute
-	
-	//to knock out an entire row (all 8am shifts for every day, for instance)..
-	$("#07").children().not(".na").each(function(i, e) {
-		td = $(e);
-		//for each child (td) of #07 (row 07)
-		td.addClass("closed");
-		td.find("input").prop("checked",false);
-	});
-	//8am hours..
-	$("#08").children().not(".na").each(function(i, e) {
-		td = $(e);
-		
-		td.addClass("closed");
-		td.find("input").prop("checked",false);
-	});
-	//8pm hours..
-	$("#20").children().not(".na").each(function(i, e) {
-		td = $(e);
-		
-		td.addClass("closed");
-		td.find("input").prop("checked",false);
-	});
-	//9pm hours..
-	$("#21").children().not(".na").each(function(i, e) {
-		td = $(e);
-		
-		td.addClass("closed");
-		td.find("input").prop("checked",false);
-	});
-	
-	//to take off a block of hours in one day, ie sunday from 9am to 4pm shift..
-	for(var i=9; i<=16;i++) {
-		var td;
-		if(i<10) {
-			td = $("#sun0"+i);
-		}else td = $("#sun"+i);
-		td.addClass("closed");
-		td.find("input").prop("checked",false);
-	}
-	//friday from 5 to closing
-	for(var i=17; i<=19;i++) {
-		var td;
-		if(i<10) {
-			td = $("#fri0"+i);
-		}else td = $("#fri"+i);
-		td.addClass("closed");
-		td.find("input").prop("checked",false);
-	}
-	//saturday hours
-	for(var i=9; i<=19;i++) {
-		var td;
-		if(i<10) {
-			td = $("#sat0"+i);
-		}else td = $("#sat"+i);
-		td.addClass("closed");
-		td.find("input").prop("checked",false);
-	}
-*/
 	//Now we'll set up the handler for each cell that isn't marked by a class "na"
 	$('table#admin_table td').not('.na').click(clicked);
 });
