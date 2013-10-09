@@ -7,7 +7,7 @@
 
 <table>
 <tbody>
-
+<tr><td></td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td></tr>
 <?php
 	for($d=0; $d<7; $d++) {
 		echo '<tr>';
@@ -40,7 +40,7 @@
 				$val = $day.'0'.$i;
 				echo "<td>".$_POST[$val]."</td>";
 			}else {
-				$val = 'sun'.$i;
+				$val = $day.$i;
 				echo "<td>".$_POST[$val]."</td>";
 			}
 		}
