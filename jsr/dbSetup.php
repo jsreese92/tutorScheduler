@@ -64,9 +64,9 @@ $sql="create table hoursByDay (
   PID INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (PID,day),
   day VARCHAR(15), 
-  h0 INT, h1 INT, h2 INT, h3 INT, h4 INT, h5 INT, h6 INT, h7 INT, h8 INT,
-  h9 INT, h10 INT, h11 INT, h12 INT, h13 INT, h14 INT, h15 INT, h16 INT,
-  h17 INT, h18 INT, h19 INT, h20 INT, h21 INT, h22 INT, h23 INT)";
+  h00 INT, h01 INT, h02 INT, h03 INT, h04 INT, h05 INT, h06 INT, h07 INT, 
+  h08 INT, h09 INT, h10 INT, h11 INT, h12 INT, h13 INT, h14 INT, h15 INT, 
+  h16 INT, h17 INT, h18 INT, h19 INT, h20 INT, h21 INT, h22 INT, h23 INT)";
 
 print("<p>\n");
 if (mysqli_query($con,$sql)){

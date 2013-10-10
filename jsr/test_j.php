@@ -29,27 +29,42 @@ $t = 999;
 $sql=("update hoursByDay set h17='" . $t . "'" . 
   "where PID='1' and day='sun'");
 
-print("<p>\n");
 if (!mysqli_query($con,$sql)){
+  print("<p>\n");
   echo "Error updating: " . mysqli_error($con);
+  print("</p>\n");
 }
-print("</p>\n");
 
-//TODO Update all variables
+//TODO update based on username
+// Update all variables
+foreach($_POST as $k => $v){
+  //echo("key: " . $k . " value: " . $v . " ");
+  $day = substr($k,0,3);
+  $hour = substr($k,3,2);
+  $sql=("update hoursByDay set h" . $hour . "='" . $v . "'" .
+    "where PID = '1' and day='" . $day . "'");
 
-
-// Print database
-$sql = ("select * from hoursByDay"); // Get result of query
-$result = mysqli_query($con,$sql);
-$numRows = mysqli_num_rows($result);
-
-for($i = 0; $i < $numRows; $i++){
-  // get the array from result indexed by numbers
-  $row = mysqli_fetch_array($result, MYSQLI_NUM); 
-  foreach($row as $value){
-    printf("%s, ", $value);
+  if (!mysqli_query($con,$sql)){
+    print("<p>\n");
+    echo "Error updating: " . mysqli_error($con);
+    print("</p>\n");
   }
-  echo("<br>");
+}
+echo("<br>");
+
+function printHoursByDay(){
+  $sql = ("select * from hoursByDay"); // Get result of query
+  $result = mysqli_query($con,$sql);
+  $numRows = mysqli_num_rows($result);
+
+  for($i = 0; $i < $numRows; $i++){
+    // get the array from result indexed by numbers
+    $row = mysqli_fetch_array($result, MYSQLI_NUM); 
+    foreach($row as $value){
+      printf("%s, ", $value);
+    }
+    echo("<br>");
+  }
 }
 
 /*
