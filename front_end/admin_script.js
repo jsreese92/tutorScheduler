@@ -22,8 +22,6 @@ $(document).ready(function () {
 	
 	//Now we'll set up the handler for each cell that isn't marked by a class "na"
 	$('table#admin_table td').not('.na').click(clicked);
-	
-	$('#clear').click(clear);
 });
 
 var clicked = function(event) {
