@@ -4,32 +4,32 @@ $con=mysqli_connect("localhost","root","???Jrizzle343756");
 
 // Check connection
 if (mysqli_connect_errno($con)){
-  print("<p>\n");
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-  print("</p>\n");
+  echo "Failed to connect to MySQL: " . mysqli_connect_error() . "<br>";
 }
 
 // Create database
-print("<p>\n");
 $sql="create database IF NOT EXISTS tutorScheduler";
 if (mysqli_query($con,$sql)){
-  echo "Database tutorScheduler created successfully \r\n";
+  echo "Database tutorScheduler created successfully <br>";
 }
 else {
-  echo "Error creating database: " . mysqli_error($con);
+  echo "Error creating database: " . mysqli_error($con) . "<br>";
 }
-print("</p>\n");
 
 // Set database
-print("<p>\n");
 $sql="use tutorScheduler";
 if (mysqli_query($con,$sql)){
-  echo "Database set successfully \r\n";
+  echo "Database set successfully <br>";
 }
 else {
-  echo "Error setting database: " . mysqli_error($con);
+  echo "Error setting database: " . mysqli_error($con) . "<br>";
 }
-print("</p>\n");
+
+// Drop studentInfo if previously there
+$sql="drop table if exists studentInfo";
+if(mysqli_query($con,$sql)){
+  echo "Deleted previously existing studentInfo table <br>";
+}
 
 // Create student info
 $sql="create table studentInfo (
@@ -37,27 +37,29 @@ $sql="create table studentInfo (
   PRIMARY KEY (PID),
   Fname VARCHAR(30), Lname VARCHAR(30))";
 
-print("<p>\n");
 if (mysqli_query($con,$sql)){
-  echo "Table studentInfo created successfully \r\n";
+  echo "Table studentInfo created successfully <br>";
 }
 else{
-  echo "Error creating table: " . mysqli_error($con);
+  echo "Error creating table: " . mysqli_error($con) . "<br>";
 }
-print("</p>\n");
 
 // Populate studentInfo with initial data
 $sql="load data local infile './testStudent.txt' into table studentInfo 
   fields terminated by ','";
 
-print("<p>\n");
 if (mysqli_query($con,$sql)){
-  echo "studentInfo loaded successfully.\r\n";
+  echo "studentInfo loaded successfully <br>";
 }
 else{
-  echo "Error loading data: " . mysqli_error($con);
+  echo "Error loading data: " . mysqli_error($con) . "<br>";
 }
-print("</p>\n");
+
+// Drop hoursByDay if previously there
+$sql="drop table if exists hoursByDay";
+if(mysqli_query($con,$sql)){
+  echo "Deleted previously existing hoursByDay table <br>";
+}
 
 // Create hoursByDay
 $sql="create table hoursByDay (
@@ -68,45 +70,26 @@ $sql="create table hoursByDay (
   h08 INT, h09 INT, h10 INT, h11 INT, h12 INT, h13 INT, h14 INT, h15 INT, 
   h16 INT, h17 INT, h18 INT, h19 INT, h20 INT, h21 INT, h22 INT, h23 INT)";
 
-print("<p>\n");
 if (mysqli_query($con,$sql)){
-  echo "Table hoursByDay created successfully.\r\n";
+  echo "Table hoursByDay created successfully.<br>";
 }
 else{
-  echo "Error creating table: " . mysqli_error($con);
+  echo "Error creating table: " . mysqli_error($con) . "<br>";
 }
-print("</p>\n");
 
 // Populate hoursByDay with initial data
 $sql="load data local infile './testData.txt' into table hoursByDay
   fields terminated by ','";
 
-print("<p>\n");
 if (mysqli_query($con,$sql)){
-  echo "hoursByDay loaded successfully.\r\n";
+  echo "hoursByDay loaded successfully.<br>";
 }
 else{
-  echo "Error loading data: " . mysqli_error($con);
+  echo "Error loading data: " . mysqli_error($con) . "<br>";
 }
-print("</p>\n");
-
-/*
-// Test updating
-$sql="update hoursByDay set h0=999
-  where PID='1' and day='mon'";
-
-print("<p>\n");
-if (!mysqli_query($con,$sql)){
-  echo "Error updating: " . mysqli_error($con);
-}
-print("</p>\n");
- */
 
 
-
-
-
-/*
+/* old way of doing variables
 $sql="create table sampleData (
   PID INT NOT NULL AUTO_INCREMENT, 
   PRIMARY KEY (PID),
@@ -141,7 +124,7 @@ $sql="create table sampleData (
   sat19 INT, sat20 INT, sat21 INT, sat22 INT, sat23 INT)";
 
 if (mysqli_query($con,$sql)){
-  echo "Table sampleData created successfully \r\n";
+  echo "Table sampleData created successfully <br>";
 }
 else{
   echo "Error creating table: " . mysqli_error($con);
