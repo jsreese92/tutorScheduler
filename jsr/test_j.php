@@ -24,7 +24,9 @@ if (!mysqli_query($con,$sql)){
 print("</p>\n");
 
 // Update one variable test
-$sql=("update hoursByDay set h17='" . $_POST['sun17'] . "'" . 
+$t = 999;
+//$sql=("update hoursByDay set h17='" . $_POST['sun17'] . "'" . 
+$sql=("update hoursByDay set h17='" . $t . "'" . 
   "where PID='1' and day='sun'");
 
 print("<p>\n");
@@ -33,7 +35,22 @@ if (!mysqli_query($con,$sql)){
 }
 print("</p>\n");
 
+//TODO Update all variables
+
+
 // Print database
+$sql = ("select * from hoursByDay"); // Get result of query
+$result = mysqli_query($con,$sql);
+$numRows = mysqli_num_rows($result);
+
+for($i = 0; $i < $numRows; $i++){
+  // get the array from result indexed by numbers
+  $row = mysqli_fetch_array($result, MYSQLI_NUM); 
+  foreach($row as $value){
+    printf("%s, ", $value);
+  }
+  echo("<br>");
+}
 
 /*
    echo 'Sunday:';
