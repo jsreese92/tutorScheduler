@@ -243,6 +243,7 @@
 		</div>
 		<br>
 		<button type="submit">Submit</button>
+		<button id="clear" type="button" onclick="clear_requests()">Clear</button>
 	</form>
 
 <!--Insert table from database-->

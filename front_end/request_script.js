@@ -77,3 +77,15 @@ var clicked = function(event) {
 		cell.find('select').val(avail_num);
 	else cell.find('select').val(null);			//meaning we just deselected it
 };
+
+var clear_requests = function() {
+	var r = confirm("Are you sure you want to clear the form?");
+	
+	if(r) {
+		$("table#requests_table td").not(".na").each(function(i, td) {
+			var e = $(td);
+			e.removeClass('busy prefer_no can perfect');
+			e.children('select').val(null);
+		});
+	}
+};

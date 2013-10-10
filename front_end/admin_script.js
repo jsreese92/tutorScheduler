@@ -22,6 +22,8 @@ $(document).ready(function () {
 	
 	//Now we'll set up the handler for each cell that isn't marked by a class "na"
 	$('table#admin_table td').not('.na').click(clicked);
+	
+	$('#clear').click(clear);
 });
 
 var clicked = function(event) {
@@ -30,4 +32,17 @@ var clicked = function(event) {
 	current_cell.toggleClass("closed");
 	current_cell.toggleClass("open");
 	current_checkbox.prop("checked", !current_checkbox.prop("checked"));
+};
+
+var clear_admin = function() {
+	var r = confirm("Are you sure you want to clear the form?");
+	
+	if(r) {
+		$("table#admin_table td").not(".na").each(function(i, td) {
+			var e = $(td);
+			e.removeClass('closed');
+			e.addClass('open');
+			e.children('input').prop('checked', true);
+		});
+	}
 };

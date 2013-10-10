@@ -214,7 +214,8 @@
 		</table>
 		</div>
 		<br>
-		<button type="submit">Submit</button>
+		<button id="submit" type="submit">Submit</button>
+		<button id="clear" type="button" onclick="clear_admin()">Clear</button>
 	</form>
 
 <!--Insert table from database-->
