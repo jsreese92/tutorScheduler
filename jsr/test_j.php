@@ -10,18 +10,14 @@ $con=mysqli_connect("localhost","root","???Jrizzle343756");
 
 // Check connection
 if (mysqli_connect_errno($con)){
-  print("<p>\n");
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-  print("</p>\n");
+  echo "Failed to connect to MySQL: " . mysqli_connect_error() . "<br>";
 }
 
 // Set database
-print("<p>\n");
 $sql="use tutorScheduler";
 if (!mysqli_query($con,$sql)){
-  echo "Error setting database: " . mysqli_error($con);
+  echo "Error setting database: " . mysqli_error($con) "<br>";
 }
-print("</p>\n");
 
 echo("Before Update: <br>");
 printHoursByDay($con);
@@ -36,9 +32,7 @@ foreach($_POST as $k => $v){
     "where PID = '1' and day='" . $day . "'");
 
   if (!mysqli_query($con,$sql)){
-    print("<p>\n");
-    echo "Error updating: " . mysqli_error($con);
-    print("</p>\n");
+    echo "Error updating: " . mysqli_error($con) "<br>";
   }
 }
 
