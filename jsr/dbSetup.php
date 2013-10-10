@@ -1,13 +1,16 @@
 <?php
-// Create connection
+// Create connection on Jordan's machine
 $con=mysqli_connect("localhost","root","???Jrizzle343756");
 
 // Check connection
 if (mysqli_connect_errno($con)){
+  print("<p>\n");
   echo "Failed to connect to MySQL: " . mysqli_connect_error();
+  print("</p>\n");
 }
 
 // Create database
+print("<p>\n");
 $sql="create database IF NOT EXISTS tutorScheduler";
 if (mysqli_query($con,$sql)){
   echo "Database tutorScheduler created successfully \r\n";
@@ -15,8 +18,10 @@ if (mysqli_query($con,$sql)){
 else {
   echo "Error creating database: " . mysqli_error($con);
 }
+print("</p>\n");
 
 // Set database
+print("<p>\n");
 $sql="use tutorScheduler";
 if (mysqli_query($con,$sql)){
   echo "Database set successfully \r\n";
@@ -24,35 +29,66 @@ if (mysqli_query($con,$sql)){
 else {
   echo "Error setting database: " . mysqli_error($con);
 }
+print("</p>\n");
 
-// Create tables
+// Create student info
 $sql="create table studentInfo (
   PID INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (PID),
   Fname VARCHAR(30), Lname VARCHAR(30))";
 
+print("<p>\n");
 if (mysqli_query($con,$sql)){
   echo "Table studentInfo created successfully \r\n";
 }
 else{
   echo "Error creating table: " . mysqli_error($con);
 }
+print("</p>\n");
 
+// Populate studentInfo with initial data
+$sql="load data local infile './testStudent.txt' into table studentInfo 
+  fields terminated by ','";
+
+print("<p>\n");
+if (mysqli_query($con,$sql)){
+  echo "studentInfo loaded successfully.\r\n";
+}
+else{
+  echo "Error loading data: " . mysqli_error($con);
+}
+print("</p>\n");
+
+// Create hoursByDay
 $sql="create table hoursByDay (
   PID INT NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (PID),
+  PRIMARY KEY (PID,day),
   day VARCHAR(15), 
   h0 INT, h1 INT, h2 INT, h3 INT, h4 INT, h5 INT, h6 INT, h7 INT, h8 INT,
   h9 INT, h10 INT, h11 INT, h12 INT, h13 INT, h14 INT, h15 INT, h16 INT,
   n17 INT, h18 INT, h19 INT, h20 INT, h21 INT, h22 INT, h23 INT)";
 
+print("<p>\n");
 if (mysqli_query($con,$sql)){
-  echo "Table hoursByDay created successfully \r\n";
+  echo "Table hoursByDay created successfully.\r\n";
 }
 else{
   echo "Error creating table: " . mysqli_error($con);
 }
+print("</p>\n");
 
+// Populate hoursByDay with initial data
+$sql="load data local infile './testData.txt' into table hoursByDay
+  fields terminated by ','";
+
+print("<p>\n");
+if (mysqli_query($con,$sql)){
+  echo "hoursByDay loaded successfully.\r\n";
+}
+else{
+  echo "Error loading data: " . mysqli_error($con);
+}
+print("</p>\n");
 
 /*
 $sql="create table sampleData (
@@ -94,7 +130,7 @@ if (mysqli_query($con,$sql)){
 else{
   echo "Error creating table: " . mysqli_error($con);
 }
-*/
+ */
 
 mysqli_close($con);
 ?>
