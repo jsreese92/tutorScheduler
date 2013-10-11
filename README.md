@@ -7,11 +7,21 @@ Openshift
 Our homepage on Openshift is here: http://wctestapp-wcscheduletest.rhcloud.com/
 
 * The way we're going to manage the two repositories is we will commit and
-    add to this repository. Then, either Nic or Jordan (or Eric if he can get
-    openshift set up) will make the specific changes needed to work on 
-    openshift (changing database name/password) in our respective openshift git
-    repositories, leaving the files here as-is to be able to run on our local
-    machines and push to openshift.  
+add to this repository. Then, either Nic or Jordan (or Eric if he can get
+openshift set up) will make the specific changes needed to work on 
+openshift (changing database name/password) in our respective openshift git
+repositories, leaving the files here as-is to be able to run on our local
+machines and push to openshift.  
+
+* Openshift has our files sitting in a php/ directory. Files ready to be put
+up on openshift that have been tested locally go in the php/ directory in 
+this repository. Files in other directories here can be assumed to be only
+for personal use and not necessarily ready to go up on openshift. 
+
+* When openshift is updated, the files from the php/ directory here will be 
+pushed to openshift and the necessary changes will be made once they are on
+openshift so as not to give away important server and databse information
+since this is a public repository.
 
 Project Homepage for COMP 523
 -----------------------------
