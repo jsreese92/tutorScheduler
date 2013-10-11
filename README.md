@@ -1,5 +1,5 @@
-Tutor Scheduler for UNC-Chapel Hill's Writing Center
-====================================================
+UNC Writing Center Tutor Scheduler
+==================================
 
 REMINDER: The first thing you should ALWAYS do is \<git pull origin master\>!
 
