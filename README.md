@@ -8,7 +8,7 @@ Openshift
 
 Our homepage on Openshift is here: http://wctestapp-wcscheduletest.rhcloud.com/
 
---  The way we're going to manage the two repositories is we will commit and
+* The way we're going to manage the two repositories is we will commit and
     add to this repository. Then, either Nic or Jordan (or Eric if he can get
     openshift set up) will make the specific changes needed to work on 
     openshift (changing database name/password) in our respective openshift git
