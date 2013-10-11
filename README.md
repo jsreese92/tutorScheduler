@@ -25,15 +25,15 @@ Alright so here I'm going to attempt to put a tutorial oh how to set all this
 1. git init 
 2. git remote add origin https://github.com/jsreese92/tutorScheduler.git
 
-Here's a great graphic that illustrates what I'm about to explain:
-http://osteele.com/images/2008/git-transport.png
+    Here's a great graphic that illustrates what I'm about to explain:
+    http://osteele.com/images/2008/git-transport.png
 
-To get the most recent versions of a repository, which you should ALWAYS do 
-before doing anything else, execute the following command:
+    To get the most recent versions of a repository, which you should ALWAYS do 
+    before doing anything else, execute the following command:
 
 3. git pull origin master
 
-To upload (commit) a file to our repository execute the following commands:
+    To upload (commit) a file to our repository execute the following commands:
 
 4. git add \<file to be commited\>
 
@@ -43,7 +43,7 @@ To upload (commit) a file to our repository execute the following commands:
     committed to your local repository, check the graphic above if this seems 
     weird.)
 
-Also, when in doubt, the following command may give you an idea on what you
-  need to do next:
+    Also, when in doubt, the following command may give you an idea on what you
+    need to do next:
   
 7. git status
