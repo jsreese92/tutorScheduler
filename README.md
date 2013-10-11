@@ -1,8 +1,6 @@
 UNC Writing Center Tutor Scheduler
 ==================================
 
-REMINDER: The first thing you should ALWAYS do is \<git pull origin master\>!
-
 Openshift
 ---------
 
@@ -14,6 +12,10 @@ Our homepage on Openshift is here: http://wctestapp-wcscheduletest.rhcloud.com/
     openshift (changing database name/password) in our respective openshift git
     repositories, leaving the files here as-is to be able to run on our local
     machines and push to openshift.  
+
+Project Homepage for COMP 523
+-----------------------------
+http://www.unc.edu/~jonesep/
 
 Github Set-up Instructions
 --------------------------
