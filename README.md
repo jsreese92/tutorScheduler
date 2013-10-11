@@ -1,6 +1,7 @@
 REMINDER: The first thing you should ALWAYS do is \<git pull origin master\>!
 
 Our homepage on Openshift is here: http://wctestapp-wcscheduletest.rhcloud.com/
+
 --  The way we're going to manage the two repositories is we will commit and
     add to this repository. Then, either Nic or Jordan (or Eric if he can get
     openshift set up) will make the specific changes needed to work on 
