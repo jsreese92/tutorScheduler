@@ -1,6 +1,6 @@
 <?php
 // Create connection
-$con=mysqli_connect("127.10.98.130","adminR4Im6WI","V16hdDRZ_SGr");
+/* REDACTED FOR SECURITY PURPOSES*/
 
 // Check connection
 if (mysqli_connect_errno($con)){
