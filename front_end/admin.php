@@ -4,6 +4,31 @@
 	{
 		echo "Failed connect to database: " . mysqli_connect_error();
 	}
+
+//IF WE GOT TO THE PAGE VIA THE SUBMIT BUTTON, UPDATE THE DATABASE!
+	if($_POST['submit_checkbox']==true) {
+
+		function getClass($val) {
+			if($_POST[$val]) {
+				$val = 1;
+			}else $val = 0;
+	
+			return $val;
+		}
+	
+		$day_array = array("sun", "mon", "tue", "wed", "thu", "fri", "sat");
+	
+		for($d=0; $d<7; $d++) {
+			$day = $day_array[$d];
+			for($i=7; $i<=23; $i++) {
+				if($i < 10) {
+					mysqli_query($con, "UPDATE openHours SET h0".$i."=".getClass($day.'0'.$i.'_val')." WHERE day='".$day."'");
+				}else {
+					 mysqli_query($con, "UPDATE openHours SET h".$i." =".getClass($day.$i.'_val')." WHERE day='".$day."'");
+				}
+			}
+		}
+	}
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +41,10 @@
 	<script type="text/javascript" src="admin_script.js"></script>
 </head>
 <body>
-	<form id="admin_form" action="admin_submit_hours.php" method="post">
+
+	<?php if($_POST['submit_checkbox']==true) echo "<span id='submit_check_span' hidden=true>true</span>"; ?>
+
+	<form id="admin_form" action="admin.php" method="post">
 		<div id="admin_div">
 		<table id="admin_table">
 			<thead>
@@ -214,8 +242,10 @@
 		</table>
 		</div>
 		<br>
-		<button id="submit" type="submit">Submit</button>
-		<button id="clear" type="button" onclick="clear_admin()">Clear</button>
+		<button id="submit" type="submit" onclick="submit_admin()">Submit</button>
+		<button id="clear" type="button" onclick="clear_admin()">Clear All Hours</button>
+		<button id="reset" type="button" onclick="reset_admin()">Reset</button>
+
 	</form>
 
 <!--Insert table from database-->
