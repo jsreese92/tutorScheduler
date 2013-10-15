@@ -37,7 +37,7 @@
 	<meta charset="UTF-8">
 	<title>Admin Form</title>
 	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
-	<script type="text/javascript" src="./../jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="./../common/jquery-1.10.2.min.js"></script>
 	<script type="text/javascript" src="admin_script.js"></script>
 </head>
 <body>
