@@ -57,9 +57,13 @@ var submit_admin = function() {
 };
 
 var reset_admin = function() {
-	$("table#admin_table td").not(".na").each(function(i, e) {
-		check_closed($(e));
-	});
+	var r = confirm("Are you sure you want to reset the form to the previous submission?");
+
+	if(r) {
+		$("table#admin_table td").not(".na").each(function(i, e) {
+			check_closed($(e));
+		});
+	}
 };
 
 //check_closed takes in a jqueryified cell and checks the table to determine if the center is closed
