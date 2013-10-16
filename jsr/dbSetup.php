@@ -78,7 +78,7 @@ else{
 }
 
 // Populate hoursByDay with initial data
-$sql="load data local infile './testData.txt' into table hoursByDay
+$sql="load data local infile './testAvail.txt' into table hoursByDay
   fields terminated by ','";
 
 if (mysqli_query($con,$sql)){
@@ -88,6 +88,36 @@ else{
   echo "Error loading data: " . mysqli_error($con) . "<br>";
 }
 
+// Drop openHours if previously there
+$sql="drop table if exists openHours";
+if(mysqli_query($con,$sql)){
+  echo "Deleted previously existing openHours table <br>";
+}
+
+// Create openHours
+$sql="create table openHours (
+  day VARCHAR(15), 
+  h07 INT, h08 INT, h09 INT, h10 INT, h11 INT, h12 INT, h13 INT, h14 INT, 
+  h15 INT, h16 INT, h17 INT, h18 INT, h19 INT, h20 INT, h21 INT, h22 INT, 
+  h23 INT)";
+
+if (mysqli_query($con,$sql)){
+  echo "Table openHours created successfully.<br>";
+}
+else{
+  echo "Error creating table: " . mysqli_error($con) . "<br>";
+}
+
+// Populate openHours with initial data (all open)
+$sql="load data local infile './testHours.txt' into table openHours 
+  fields terminated by ','";
+
+if (mysqli_query($con,$sql)){
+  echo "openHours loaded successfully.<br>";
+}
+else{
+  echo "Error loading data: " . mysqli_error($con) . "<br>";
+}
 
 /* old way of doing variables
 $sql="create table sampleData (
