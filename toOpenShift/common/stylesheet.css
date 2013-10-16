@@ -35,3 +35,9 @@ th, td {
 	overflow: auto;
 	border: thin solid black;
 }
+
+#success {
+	background-color: #7CDE88;
+	font-size: 150%;
+	text-align: center;
+}
