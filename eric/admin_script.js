@@ -74,7 +74,7 @@ var check_closed = function(td) {
 	var hour = name.substring(3,5);
 
 	td.removeClass();
-	td.addClass($("tr#"+day+" td."+hour+"").html());
+	td.addClass($("table#hours_database_result tr."+day+" td."+hour+"").html());
 	if(td.hasClass('closed')) {
 		td.children('input').prop('checked', false);
 	}else if(td.hasClass('open')) {

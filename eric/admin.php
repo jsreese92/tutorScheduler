@@ -48,7 +48,15 @@
 		<div id="admin_div">
 		<table id="admin_table">
 			<thead>
-				<tr><th></th><th>Sunday</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th></tr>
+				<tr>
+					<th class="na"></th>
+					<th class="na">Sunday</th>
+					<th class="na">Monday</th>
+					<th class="na">Tuesday</th>
+					<th class="na">Wednesday</th>
+					<th class="na">Thursday</th>
+					<th class="na">Friday</th>
+					<th class="na">Saturday</th></tr>
 			</thead>
 			<tbody>
 <!-- 7:00AM HOUR BEGINS HERE -->
@@ -249,7 +257,7 @@
 	</form>
 
 <!--Insert table from database-->
-<table id="database_result" hidden=true>
+<table id="hours_database_result" hidden=true>
 <tbody>
 <?php
 	
@@ -266,7 +274,7 @@
 	
 	//populate the table with the values from the database
 	while($row = mysqli_fetch_array($result)) {
-		echo "<tr id='".$row[0]."'>";
+		echo "<tr class='".$row[0]."'>";
 		for($i=1; $i<18; $i++) {
 			if($i < 4) {
 				echo "<td class='0".($i+6)."'>".numToClass($row[$i])."</td>";

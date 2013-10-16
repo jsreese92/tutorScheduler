@@ -4,7 +4,31 @@
 	{
 		echo "Failed connect to database: " . mysqli_connect_error();
 	}
+
+//IF WE GOT TO THE PAGE VIA THE SUBMIT BUTTON, UPDATE THE DATABASE!
+	if($_POST['submit_checkbox']==true) {
+
+		function getVal($val) {
+			return $_POST[$val];
+		}
+
+		$day_array = array("sun", "mon", "tue", "wed", "thu", "fri", "sat");
+	
+		for($d=0; $d<7; $d++) {
+			//echo("key: " . $k . " value: " . $v . " ");
+			$day = $day_array[$d];
+			for($h=7; $h<=23; $h++) {
+				if($h<10) {
+					mysqli_query($con, "UPDATE hoursByDay SET h0".$h."='".getVal($day.'0'.$h.'_val')."'"."where PID = '".$_POST['current_pid']."' and day='".$day."'");
+				}else {
+					mysqli_query($con, "UPDATE hoursByDay SET h".$h."='".getVal($day.$h.'_val')."'"."where PID = '".$_POST['current_pid']."' and day='".$day."'");
+				}
+				
+			}
+		}
+	}
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -16,6 +40,9 @@
 	<script type="text/javascript" src="request_script.js"></script>
 </head>
 <body>
+	<?php if($_POST['submit_checkbox']==true) echo "<span id='submit_check_span' hidden=true>true</span>"; ?>
+
+	<?php echo "Currently logged in as PID=<span id=current_pid_span>".$_POST['current_pid']."</span>"?>
 	
 	<p>To use this form, simply select the desired availability in the dropdown in the upper-left corner of the table,
 		and start clicking spots on the table to assign each time-block to the selected availability! To undo or deselect
@@ -37,18 +64,31 @@
 		is a <strong>request,</strong> and in no way guarantees that your assigned shifts will perfectly reflect it.
 	</p>
 	
-	<form id="request_form" action="requests_submit.php" method="post">
+	<form id="request_form" action="requests.php" method="post">
+		<select id="current_pid" name="current_pid" hidden=true>
+			<option value=1>1</option>
+			<option value=2>2</option>
+			<option value=3>3</option>
+		</select>
+
 		<div id="request_div">
 		<table id="requests_table">
 			<thead>
 				<tr><th>
-					<select id="avail">
-						<option value="busy">Busy</option>
-						<option value="prefer_no">Prefer Not</option>
-						<option value="can">Can Work</option>
-						<option value="perfect">Perfect</option>
-					</select>
-					</th><th>Sunday</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th></tr>
+						<select id="avail">
+							<option value="busy">Busy</option>
+							<option value="prefer_no">Prefer Not</option>
+							<option value="can">Can Work</option>
+							<option value="perfect">Perfect</option>
+						</select>
+					</th>
+					<th class="na">Sunday</th>
+					<th class="na">Monday</th>
+					<th class="na">Tuesday</th>
+					<th class="na">Wednesday</th>
+					<th class="na">Thursday</th>
+					<th class="na">Friday</th>
+					<th class="na">Saturday</th></tr>
 			</thead>
 			<tbody>
 <!-- 7:00AM HOUR BEGINS HERE -->
@@ -241,16 +281,45 @@
 			</tbody>
 		</table>
 		</div>
+
 		<br>
-		<button type="submit">Submit</button>
-		<button id="clear" type="button" onclick="clear_requests()">Clear</button>
+		<button id="submit" type="submit" onclick="submit_requests()">Submit</button>
+		<button id="clear" type="button" onclick="clear_requests()">Clear All</button>
+		<button id="reset" type="button" onclick="reset_requests()">Reset</button>
+		<button type="button" onclick="fill_all()">Fill</button>
+		
 	</form>
 
-<!--Insert table from database-->
-<table id="database_result" hidden=true>
+<!--Insert table from student database-->
+<table id="student_database_result" hidden=true>
 <tbody>
 <?php
 	
+
+	if(!$result = mysqli_query($con, "SELECT * FROM hoursByDay WHERE PID=".$_POST['current_pid'])){
+		echo "Error ";
+		echo mysqli_error($con);
+	}
+	
+	//populate the table with the values from the database
+	while($row = mysqli_fetch_array($result)) {
+		echo "<tr class='".$row[1]."'>";
+		for($i=7; $i<24; $i++) {
+			if($i < 10) {
+				echo "<td class='0".($i)." na'>".$row[$i+2]."</td>";
+			}else echo "<td class='".($i)." na'>".$row[$i+2]."</td>";
+		}
+		echo "</tr>\n";
+	}
+
+?>
+</tbody>
+</table>
+<!--Insert table from open hours database-->
+<table id="hours_database_result" hidden=true>
+<tbody>
+<?php
+
 	function numToClass($val) {
 		if($val==1) { 
 			return 'open';
@@ -264,7 +333,7 @@
 	
 	//populate the table with the values from the database
 	while($row = mysqli_fetch_array($result)) {
-		echo "<tr id='".$row[0]."'>";
+		echo "<tr class='".$row[0]."'>";
 		for($i=1; $i<18; $i++) {
 			if($i < 4) {
 				echo "<td class='0".($i+6)."'>".numToClass($row[$i])."</td>";
@@ -274,8 +343,5 @@
 	}
 
 ?>
-</tbody>
-</table>
-
 </body>
 </html>

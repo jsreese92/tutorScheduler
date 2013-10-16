@@ -11,6 +11,6 @@ sat |  0  |  0  |  0  | ... |  0  |  0
 
 the 'day' column is the primary key,type VARCHAR with length 3.  each h07...h23 column is an INT.
 
-You'll also need to change the database connection at the top of ALL php files: admin.php, admin_submit_hours.php, requests.php, AND requests_submit.php because right now it's connecting to 'localhost', 'jonesep', '', 'tutorScheduler'
+You'll also need to change the database connection at the top of ALL php files: admin.php AND requests.php because right now it's connecting to 'localhost', 'jonesep', '', 'tutorScheduler'
 
-NOTE: YOU SHOULD NEVER ACCESS admin_set_script.php or requests_submit UNLESS it is through the submit button.  IF YOU DO, IT WILL SCREW THINGS UP.  We should probably fix this...somehow. But hell if I know how.  I'm sure it's pretty straightforward to check if the page was reached from the submit button and only run the script if it was, but I'm not sure.  I'll look into it.
+NOTE: YOU SHOULD NEVER ACCESS requests.php UNLESS it is through the submit button.  I'm using pickStudent.php to mock up the login page, where the current active student is selected. First go there and pick a PID, THEN you can mess with the request form.

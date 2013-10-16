@@ -1,30 +1,45 @@
 $(document).ready(function () {
-	//First, we'll select every <td> EXCEPT for those with the 'na' class. We'll add a dropdown to each.
+	//set the current_pid dropdown to whatever you selected before
+	$('#current_pid').val($('#current_pid_span').html());
+	if($('#current_pid').val() == null) {
+		alert("DO NOT ACCESS THIS PAGE DIRECTLY. GO TO pickStudent.html FOR TESTING PURPOSES");
+	}
+
+	//if this triggers, we just hit submit
+	if($('#submit_check_span').html() == 'true') {
+//		alert('Successfully submitted hours!');
+		$('body').prepend("<div id=success>Successfully Submitted Hours!</div>");
+		$('#success').delay(10000).fadeOut(1000);
+	}
+
 	
+	//First, we'll select every <td> EXCEPT for those with the 'na' class. We'll add a dropdown to each.	
 	$("table#requests_table td").not(".na").each(function(i, e) {
 		td = $(e);
 		var name = td.attr("id");
 		var dropdown = $("<select>");
-		dropdown.attr("name",name);
+		dropdown.attr("name",name+"_val");
 		dropdown.append("<option value='0'>Busy</option>" +
 				"<option value='1'>Prefer Not</option>" +
 				"<option value='2'>Can Work</option>" +
 				"<option value='3'>Perfect</option>");
 		dropdown.hide();
 		
-		//now the dropdown is in place and has a name value of [td name], as in mon09
+		//now the dropdown is in place and has a name value of [td id]_val, as in mon09_val
 		td.append(dropdown);
 		dropdown.val(null);
 		
 		//now let's check the database to see if it's closed during this shift
 		var day = name.substring(0,3);
 		var hour = name.substring(3,5);
-		
-		if($("tr#"+day+" td."+hour+"").html() == 'closed') {
-			td.append('Closed');
+		if($("table#hours_database_result tr."+day+" td."+hour+"").html() == 'closed') {
 			td.addClass('na');
 			dropdown.val(0);
 		}
+		
+		//Finally, we'll fill it with the value from the database if we aint closed
+		if(!td.hasClass('na'))
+			fill_table(td);
 	});
 
 	//Next we'll set up a handler for when the submit button is clicked, to check that every cell has been filled
@@ -42,6 +57,13 @@ $(document).ready(function () {
 		}
 	});
 	
+	//add a checkbox that will automatically check if we click the submit button, so the php script won't accidentally set the database values if we didn't mean to
+	var checkbox = $("<input type='checkbox'>");
+	checkbox.attr("name","submit_checkbox");
+	checkbox.attr("id","submit_box_id");
+	checkbox.hide();
+	$('form').append(checkbox);
+
 	//Now, we'll set up an event handler for a click on every cell in the table EXCEPT for headers, times down the left,
 	//	and N/A blocks where the center is not open
 	$('td').not('.na').click(clicked);
@@ -78,14 +100,67 @@ var clicked = function(event) {
 	else cell.find('select').val(null);			//meaning we just deselected it
 };
 
+var submit_requests = function() {
+	$('#submit_box_id').prop('checked',true);
+};
+
 var clear_requests = function() {
 	var r = confirm("Are you sure you want to clear the form?");
 	
 	if(r) {
 		$("table#requests_table td").not(".na").each(function(i, td) {
 			var e = $(td);
-			e.removeClass('busy prefer_no can perfect');
+			e.removeClass();
 			e.children('select').val(null);
 		});
 	}
+};
+
+var reset_requests = function() {
+	var r = confirm("Are you sure you want to reset the form to the previous submission?");
+	
+	if(r) {
+		$("table#requests_table td").not(".na").each(function(i, e) {
+			fill_table($(e));
+		});		
+	}	
+};
+
+var fill_all = function() {
+	$("table#requests_table td").not(".na").each(function(i, td) {
+		var e = $(td);
+		e.removeClass();
+		e.addClass('perfect');
+		e.children('select').val(3);
+	});	
+};
+
+//fill_table takes in a jqueryified cell and checks the database_table to fill out the users view
+var fill_table = function(td) {
+	var name = td.attr("id");
+	
+	var day = name.substring(0,3);
+	var hour = name.substring(3,5);
+
+	td.removeClass();
+
+	var availability = null;
+	var avail_num = $("table#student_database_result tr."+day+" td."+hour+"").html();
+	
+	//Change the class(and hence the color) of the cell based on the availability the user has selected. We'll also
+	//	translate the availability value into its equivalent number to facilitate setting the cell value later.  We'll
+	//	have to remove all the other class tags (in case we're changing a cell from one class to another) and then toggle
+	//	the appropriate availability so it'll turn on if it's currently off and turn off if it's currently on.
+	if(avail_num==0) {
+		availability = 'busy';
+	}else if(avail_num==1) {
+		availability = 'prefer_no';
+	}else if(avail_num==2) {
+		availability = 'can';
+	}else if(avail_num==3) {
+		availability = 'perfect';
+	}
+	
+	td.addClass(availability);
+	td.children('select').val(avail_num);
 };

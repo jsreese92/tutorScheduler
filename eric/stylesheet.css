@@ -7,7 +7,7 @@ table {
 th, td {
 	padding: 5px;
 	text-align: center;
-	outline: solid black 1px;
+	outline: solid #1C1C1C 1px;
 }
 
 .busy {
@@ -23,6 +23,9 @@ th, td {
 .perfect {
 	background-color: green;
 	color:white;
+}
+.na {
+	background-color: #CCCCCC
 }
 
 .closed {
