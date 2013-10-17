@@ -75,7 +75,7 @@
 </head>
 <body>
 	<div id="add_tutor">
-	<h2>Add Tutor</h2>
+	<h2>Add/Remove Tutor</h2>
 	<form id="add_tutor_form" action="admin_add_remove_tutor.php" method="post">
 		<span class="input_span">First Name:</span><input type="text" name="Fname">
 		<br>
