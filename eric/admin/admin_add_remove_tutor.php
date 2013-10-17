@@ -69,7 +69,7 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
 	<script type="text/javascript" src="./../common/jquery-1.10.2.min.js"></script>
-	<script type="text/javascript" src="admin_add_tutor.js"></script>
+	<script type="text/javascript" src="admin_add_remove_tutor.js"></script>
 	<meta charset="UTF-8">
 	<title>Add a Tutor</title>
 </head>
