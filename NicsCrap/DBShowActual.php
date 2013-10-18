@@ -37,7 +37,7 @@ $sunh23Open=0; $monh23Open=0; $tueh23Open=0; $wedh23Open=0; $thuh23Open=0; $frih
 
 /*********VARIABLES FOR GENERATING MASTER SCHEDULE*********/
 $prefs = array(1,2,3);
-$days = array(Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday);
+$days = array(sun,mon,tue,wed,thu,fri,sat);
 $hours = array(7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23);
 
 //18X7 array to hold strings which will contain every person working. An entry
