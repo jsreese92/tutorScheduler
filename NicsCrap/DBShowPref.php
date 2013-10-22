@@ -1,6 +1,6 @@
 <?php
 // Create connection
-$con=mysqli_connect("localhost","nabashia","INSERT PWORD");
+$con=mysqli_connect();
 
 // Check connection
 if (mysqli_connect_errno($con)){
@@ -14,8 +14,9 @@ if (!mysqli_query($con,$sql)){
 }
 
 /*********VARIABLES FOR RESTRICTING DISPLAY FROM CUSTOM HOURS*********/
-$setDays = array(sun,mon,tue,wed,thu,fri,sat); // needed for the openHours table
-$setHrs = array(h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23);
+
+$days = array(sun,mon,tue,wed,thu,fri,sat); // needed for the openHours table
+$hours = array(h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23);
 $sunh07Open=0; $monh07Open=0; $tueh07Open=0; $wedh07Open=0; $thuh07Open=0; $frih07Open=0; $sath07Open=0;
 $sunh08Open=0; $monh08Open=0; $tueh08Open=0; $wedh08Open=0; $thuh08Open=0; $frih08Open=0; $sath08Open=0;
 $sunh09Open=0; $monh09Open=0; $tueh09Open=0; $wedh09Open=0; $thuh09Open=0; $frih09Open=0; $sath09Open=0;
@@ -34,20 +35,17 @@ $sunh21Open=0; $monh21Open=0; $tueh21Open=0; $wedh21Open=0; $thuh21Open=0; $frih
 $sunh22Open=0; $monh22Open=0; $tueh22Open=0; $wedh22Open=0; $thuh22Open=0; $frih22Open=0; $sath22Open=0;
 $sunh23Open=0; $monh23Open=0; $tueh23Open=0; $wedh23Open=0; $thuh23Open=0; $frih23Open=0; $sath23Open=0;
 
-/*********VARIABLES FOR GENERATING MASTER SCHEDULE*********/
+// 1 prefer not to work, 2 can work, 3 perfect
 $prefs = array(1,2,3);
-$days = array(sun,mon,tue,wed,thu,fri,sat);
-$hours = array(6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23);
 
 //18X7 array to hold strings which will contain every person working. An entry
 //represents an hour for day, starting at 7am on Sunday to 12am on Saturday
 $availMatrix = array();
 
 //Arrays to store the names of people working that hour, entry 0 is sunday, entry 6 is saturday
-$h6Arr = array();
-$h7Arr = array();
-$h8Arr = array();
-$h9Arr = array();
+$h07Arr = array();
+$h08Arr = array();
+$h09Arr = array();
 $h10Arr = array();
 $h11Arr = array();
 $h12Arr = array();
@@ -68,8 +66,8 @@ $tempName = "";
 $tempNList = "";
 
 //Loops through the openHours table and finds the hours that are open (marked as 1)
-foreach($setDays as $weekDay){
-	foreach($setHrs as $hrs){
+foreach($days as $weekDay){
+	foreach($hours as $hrs){
 		$sql=("SELECT $hrs 
 			  FROM openHours
 			  WHERE(openHours.Day = '$weekDay')");
@@ -93,7 +91,7 @@ foreach($days as $weekDay){
 		foreach($prefs as $num){		
 			$sql = ("SELECT Fname,Lname 
 					FROM hoursByDay,studentInfo 
-					WHERE (hoursByDay.Day = '$weekDay' AND h$hrs = '$num' AND studentInfo.PID = hoursByDay.PID)");
+					WHERE (hoursByDay.Day = '$weekDay' AND $hrs = '$num' AND studentInfo.PID = hoursByDay.PID)");
 
 			$result = mysqli_query($con,$sql);
 			$numRows = mysqli_num_rows($result);
@@ -110,14 +108,14 @@ foreach($days as $weekDay){
 			}
 		}
 		//push the tempNList to the array for the hour
-		$tempVar = 'h'.$hrs.'Arr';
+		$tempVar = $hrs.'Arr';
 		array_push($$tempVar,$tempNList);
 		$tempNList = "";
 	}
 }
 
 //push all hour arrays into the availMatrix array to make availMatrix a 2-Dimensional Array
-array_push($availMatrix,$h7Arr,$h8Arr,$h9Arr,$h10Arr,$h11Arr,$h12Arr,$h13Arr,$h14Arr,$h15Arr,$h16Arr,$h17Arr,$h18Arr,$h19Arr,$h20Arr,
+array_push($availMatrix,$h07Arr,$h08Arr,$h09Arr,$h10Arr,$h11Arr,$h12Arr,$h13Arr,$h14Arr,$h15Arr,$h16Arr,$h17Arr,$h18Arr,$h19Arr,$h20Arr,
 	$h21Arr,$h22Arr,$h23Arr);
 
 mysqli_close($con);
@@ -146,33 +144,33 @@ mysqli_close($con);
 		<tbody>
 			<tr>
 				<td><strong>7:00AM</strong></td>
-					<td><?php if($sunh07Open == 1){echo($h7Arr[0]);} else{echo("CLOSED");}?></td>
-					<td><?php if($monh07Open == 1){echo($h7Arr[1]);} else{echo("CLOSED");}?></td>
-					<td><?php if($tueh07Open == 1){echo($h7Arr[2]);} else{echo("CLOSED");}?></td>
-					<td><?php if($wedh07Open == 1){echo($h7Arr[3]);} else{echo("CLOSED");}?></td>
-					<td><?php if($thuh07Open == 1){echo($h7Arr[4]);} else{echo("CLOSED");}?></td>
-					<td><?php if($frih07Open == 1){echo($h7Arr[5]);} else{echo("CLOSED");}?></td>
-					<td><?php if($sath07Open == 1){echo($h7Arr[6]);} else{echo("CLOSED");}?></td>
+					<td><?php if($sunh07Open == 1){echo($h07Arr[0]);} else{echo("CLOSED");}?></td>
+					<td><?php if($monh07Open == 1){echo($h07Arr[1]);} else{echo("CLOSED");}?></td>
+					<td><?php if($tueh07Open == 1){echo($h07Arr[2]);} else{echo("CLOSED");}?></td>
+					<td><?php if($wedh07Open == 1){echo($h07Arr[3]);} else{echo("CLOSED");}?></td>
+					<td><?php if($thuh07Open == 1){echo($h07Arr[4]);} else{echo("CLOSED");}?></td>
+					<td><?php if($frih07Open == 1){echo($h07Arr[5]);} else{echo("CLOSED");}?></td>
+					<td><?php if($sath07Open == 1){echo($h07Arr[6]);} else{echo("CLOSED");}?></td>
 			</tr>
 			<tr>
 				<td><strong>8:00AM</strong></td>
-					<td><?php if($sunh08Open == 1){echo($h8Arr[0]);} else{echo("CLOSED");}?></td>
-					<td><?php if($monh08Open == 1){echo($h8Arr[1]);} else{echo("CLOSED");}?></td>
-					<td><?php if($tueh08Open == 1){echo($h8Arr[2]);} else{echo("CLOSED");}?></td>
-					<td><?php if($wedh08Open == 1){echo($h8Arr[3]);} else{echo("CLOSED");}?></td>
-					<td><?php if($thuh08Open == 1){echo($h8Arr[4]);} else{echo("CLOSED");}?></td>
-					<td><?php if($frih08Open == 1){echo($h8Arr[5]);} else{echo("CLOSED");}?></td>
-					<td><?php if($sath08Open == 1){echo($h8Arr[6]);} else{echo("CLOSED");}?></td>
+					<td><?php if($sunh08Open == 1){echo($h08Arr[0]);} else{echo("CLOSED");}?></td>
+					<td><?php if($monh08Open == 1){echo($h08Arr[1]);} else{echo("CLOSED");}?></td>
+					<td><?php if($tueh08Open == 1){echo($h08Arr[2]);} else{echo("CLOSED");}?></td>
+					<td><?php if($wedh08Open == 1){echo($h08Arr[3]);} else{echo("CLOSED");}?></td>
+					<td><?php if($thuh08Open == 1){echo($h08Arr[4]);} else{echo("CLOSED");}?></td>
+					<td><?php if($frih08Open == 1){echo($h08Arr[5]);} else{echo("CLOSED");}?></td>
+					<td><?php if($sath08Open == 1){echo($h08Arr[6]);} else{echo("CLOSED");}?></td>
 			</tr>	
 			<tr>
 				<td><strong>9:00AM</strong></td>
-					<td><?php if($sunh09Open == 1){echo($h9Arr[0]);} else{echo("CLOSED");}?></td>
-					<td><?php if($monh09Open == 1){echo($h9Arr[1]);} else{echo("CLOSED");}?></td>
-					<td><?php if($tueh09Open == 1){echo($h9Arr[2]);} else{echo("CLOSED");}?></td>
-					<td><?php if($wedh09Open == 1){echo($h9Arr[3]);} else{echo("CLOSED");}?></td>
-					<td><?php if($thuh09Open == 1){echo($h9Arr[4]);} else{echo("CLOSED");}?></td>
-					<td><?php if($frih09Open == 1){echo($h9Arr[5]);} else{echo("CLOSED");}?></td>
-					<td><?php if($sath09Open == 1){echo($h9Arr[6]);} else{echo("CLOSED");}?></td>
+					<td><?php if($sunh09Open == 1){echo($h09Arr[0]);} else{echo("CLOSED");}?></td>
+					<td><?php if($monh09Open == 1){echo($h09Arr[1]);} else{echo("CLOSED");}?></td>
+					<td><?php if($tueh09Open == 1){echo($h09Arr[2]);} else{echo("CLOSED");}?></td>
+					<td><?php if($wedh09Open == 1){echo($h09Arr[3]);} else{echo("CLOSED");}?></td>
+					<td><?php if($thuh09Open == 1){echo($h09Arr[4]);} else{echo("CLOSED");}?></td>
+					<td><?php if($frih09Open == 1){echo($h09Arr[5]);} else{echo("CLOSED");}?></td>
+					<td><?php if($sath09Open == 1){echo($h09Arr[6]);} else{echo("CLOSED");}?></td>
 			</tr>	
 			<tr>
 				<td><strong>10:00AM</strong></td>
