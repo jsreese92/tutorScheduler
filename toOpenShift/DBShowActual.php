@@ -14,7 +14,6 @@ if (!mysqli_query($con,$sql)){
 }
 
 /*********VARIABLES FOR RESTRICTING DISPLAY FROM CUSTOM HOURS*********/
-
 $days = array(sun,mon,tue,wed,thu,fri,sat); // needed for the openHours table
 $hours = array(h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23);
 $sunh07Open=0; $monh07Open=0; $tueh07Open=0; $wedh07Open=0; $thuh07Open=0; $frih07Open=0; $sath07Open=0;
@@ -34,9 +33,6 @@ $sunh20Open=0; $monh20Open=0; $tueh20Open=0; $wedh20Open=0; $thuh20Open=0; $frih
 $sunh21Open=0; $monh21Open=0; $tueh21Open=0; $wedh21Open=0; $thuh21Open=0; $frih21Open=0; $sath21Open=0;
 $sunh22Open=0; $monh22Open=0; $tueh22Open=0; $wedh22Open=0; $thuh22Open=0; $frih22Open=0; $sath22Open=0;
 $sunh23Open=0; $monh23Open=0; $tueh23Open=0; $wedh23Open=0; $thuh23Open=0; $frih23Open=0; $sath23Open=0;
-
-// 1 prefer not to work, 2 can work, 3 perfect
-$prefs = array(1,2,3);
 
 //18X7 array to hold strings which will contain every person working. An entry
 //represents an hour for day, starting at 7am on Sunday to 12am on Saturday
@@ -85,13 +81,13 @@ foreach($days as $weekDay){
 	}
 }
 
-//Loops through the hoursByDay table and selects everybody who entered a 1,2,or 3
+//Loops through actSchedule and selects entries where a person is working an hour (marked as 1)
 foreach($days as $weekDay){
 	foreach($hours as $hrs){
-		foreach($prefs as $num){		
+				
 			$sql = ("SELECT Fname,Lname 
-					FROM hoursByDay,studentInfo 
-					WHERE (hoursByDay.Day = '$weekDay' AND $hrs = '$num' AND studentInfo.PID = hoursByDay.PID)");
+					FROM actSchedule,studentInfo 
+					WHERE (actSchedule.Day = '$weekDay' AND $hrs = '1' AND studentInfo.PID = actSchedule.PID)");
 
 			$result = mysqli_query($con,$sql);
 			$numRows = mysqli_num_rows($result);
@@ -102,11 +98,10 @@ foreach($days as $weekDay){
 				foreach($row as $value){
 					$tempName = $tempName . " " . $value;
 				}
-				$tempName = $tempName . ": " . $num . "<br>";
+				$tempName = $tempName . "<br>";
 				$tempNList = $tempNList . $tempName;
 				$tempName = "";
 			}
-		}
 		//push the tempNList to the array for the hour
 		$tempVar = $hrs.'Arr';
 		array_push($$tempVar,$tempNList);
@@ -125,7 +120,7 @@ mysqli_close($con);
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Student Preferences</title>
+	<title>Master Schedule</title>
 	<!--<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">-->
 </head>
 <body>
