@@ -1,6 +1,6 @@
 <?php
-// Create connection on Jordan's machine
-$con=mysqli_connect("localhost","root","???Jrizzle343756");
+// Create connection on Openshift machine
+$con=mysqli_connect();
 
 // Check connection
 if (mysqli_connect_errno($con)){
@@ -114,6 +114,39 @@ $sql="load data local infile './testHours.txt' into table openHours
 
 if (mysqli_query($con,$sql)){
   echo "openHours loaded successfully.<br>";
+}
+else{
+  echo "Error loading data: " . mysqli_error($con) . "<br>";
+}
+
+// Drop actSchedule if previously there
+$sql="drop table if exists actSchedule";
+if(mysqli_query($con,$sql)){
+  echo "Deleted previously existing actSchedule table <br>";
+}
+
+// Create actSchedule
+$sql="create table actSchedule (
+  PID INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (PID,day),
+  day VARCHAR(15), 
+  h00 INT, h01 INT, h02 INT, h03 INT, h04 INT, h05 INT, h06 INT, h07 INT, 
+  h08 INT, h09 INT, h10 INT, h11 INT, h12 INT, h13 INT, h14 INT, h15 INT, 
+  h16 INT, h17 INT, h18 INT, h19 INT, h20 INT, h21 INT, h22 INT, h23 INT)";
+  
+if (mysqli_query($con,$sql)){
+  echo "Table actSchedule created successfully.<br>";
+}
+else{
+  echo "Error creating table: " . mysqli_error($con) . "<br>";
+}
+
+// Populate actSchedule with initial data
+$sql="load data local infile './testMaster.txt' into table actSchedule 
+  fields terminated by ','";
+
+if (mysqli_query($con,$sql)){
+  echo "actSchedule loaded successfully.<br>";
 }
 else{
   echo "Error loading data: " . mysqli_error($con) . "<br>";
