@@ -1,13 +1,44 @@
 <?php
-	$con = mysqli_connect('localhost', 'jonesep', '', 'tutorScheduler');
+	$con = mysqli_connect("localhost", "jonesep", "", "tutorScheduler");
+	
 	if(mysqli_connect_errno())
 	{
-		echo "Failed connect to database: " . mysqli_connect_error();
+		echo "Failed connect to database: " . mysqli_connect_error() . "<br>";
 	}
+
+
+	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	$validation_url = str_replace("tutor/tutor_requests.php", "common/validator.php", $actual_url);
+	$tutor_url = str_replace("tutor/tutor_requests.php", "tutor/tutor.php", $actual_url);
+
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
+
+	include "./../common/key_validator.php";
+?>	
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Schedule Request</title>
+	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
+	<script type="text/javascript" src="./../common/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="tutor_requests.js"></script>
+</head>
+<body>
+
+
+<?php
+
+	if(!checkValidationKey($con, $_POST['validation_key'], $_POST['pid'], 'ugrad', 'grad')) {
+		echo "<script type='text/javascript'>location.href='".$validation_url."'</script>";
+	}
+
+
 
 //IF WE GOT TO THE PAGE VIA THE SUBMIT BUTTON, UPDATE THE DATABASE!
 	if($_POST['submit_checkbox']==true) {
-
+		
 		function getVal($val) {
 			return $_POST[$val];
 		}
@@ -15,38 +46,27 @@
 		$day_array = array("sun", "mon", "tue", "wed", "thu", "fri", "sat");
 	
 		for($d=0; $d<7; $d++) {
-			//echo("key: " . $k . " value: " . $v . " ");
 			$day = $day_array[$d];
 			for($h=7; $h<=23; $h++) {
 				if($h<10) {
-					mysqli_query($con, "UPDATE hoursByDay SET h0".$h."='".getVal($day.'0'.$h.'_val')."'"."where PID = '".$_POST['current_pid']."' and day='".$day."'");
+					mysqli_query($con, "UPDATE `hoursByDay` SET `h0".$h."`='".getVal($day.'0'.$h.'_val')."'"."where `PID` = '".$employee_info[0]."' and `day`='".$day."'");
 				}else {
-					mysqli_query($con, "UPDATE hoursByDay SET h".$h."='".getVal($day.$h.'_val')."'"."where PID = '".$_POST['current_pid']."' and day='".$day."'");
+					mysqli_query($con, "UPDATE `hoursByDay` SET `h".$h."`='".getVal($day.$h.'_val')."'"."where `PID` = '".$employee_info[0]."' and `day`='".$day."'");
 				}
 				
 			}
 		}
+		echo "<div id=success>Successfully Submitted Requests!</div>";
 	}
+
+	echo "<form method='POST' id='logout_form'>";
+		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
+
+		echo "<button type='button' onclick='goBack()'>Back to Tutor Overview Page</button>";
+		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
+		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
+	echo "</form>";
 ?>
-
-
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-	<title>Schedule Request</title>
-	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
-	<script type="text/javascript" src="./../common/jquery-1.10.2.min.js"></script>
-	<script type="text/javascript" src="tutor_requests.js"></script>
-</head>
-<body>
-	<?php 
-		if($_POST['submit_checkbox']==true) echo "<span id='submit_check_span' hidden=true>true</span>";
-		
-		$current_name = mysqli_fetch_array(mysqli_query($con, "SELECT Fname FROM studentInfo WHERE PID = ".$_POST['current_pid']));
-
-		echo "<strong>Currently logged in as ".$current_name[0]."</strong><span id=current_pid_span hidden=true>".$_POST['current_pid']."</span>"
-	?>
 	
 	<p>To use this form, simply select the desired availability in the dropdown in the upper-left corner of the table,
 		and start clicking spots on the table to assign each time-block to the selected availability! To undo or deselect
@@ -69,15 +89,13 @@
 	</p>
 	
 	<form id="request_form" action="tutor_requests.php" method="post">
-		<select id="current_pid" name="current_pid" hidden = true>
-			<?php
-				$students = mysqli_query($con, "SELECT * FROM studentInfo");
-
-				while($row = mysqli_fetch_array($students)) {
-					echo "<option value=".$row[0].">".$row[1]."</option><br>";
-				}
-			?>
-		</select>
+		<?php
+			//echo the hidden fields for submission (validation key, pid)
+			echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
+			echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
+			
+			
+		?>
 
 		<div id="request_div">
 		<table id="requests_table">
@@ -304,12 +322,13 @@
 <?php
 	
 
-	if(!$result = mysqli_query($con, "SELECT * FROM hoursByDay WHERE PID=".$_POST['current_pid'])){
+	if(!$result = mysqli_query($con, "SELECT * FROM `hoursByDay` WHERE `PID` = ".$employee_info[0])){
 		echo "Error ";
 		echo mysqli_error($con);
 	}
 	
 	//populate the table with the values from the database
+	if($result)
 	while($row = mysqli_fetch_array($result)) {
 		echo "<tr class='".$row[1]."'>";
 		for($i=7; $i<24; $i++) {
@@ -323,6 +342,7 @@
 ?>
 </tbody>
 </table>
+
 <!--Insert table from open hours database-->
 <table id="hours_database_result" hidden=true>
 <tbody>
@@ -334,7 +354,7 @@
 		}else return 'closed';
 	}
 
-	if(!$result = mysqli_query($con, "SELECT * FROM openHours")){
+	if(!$result = mysqli_query($con, "SELECT * FROM `openHours`")){
 		echo "Error ";
 		echo mysqli_error($con);
 	}

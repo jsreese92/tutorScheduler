@@ -1,9 +1,38 @@
 <?php
 	$con = mysqli_connect('localhost', 'jonesep', '', 'tutorScheduler');
+
 	if(mysqli_connect_errno())
 	{
-		echo "Failed connect to database: " . mysqli_connect_error();
+		echo "Failed connect to database: " . mysqli_connect_error() . "<br>";
 	}
+
+
+	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	$validation_url = str_replace("admin/admin_set_hours.php", "common/validator.php", $actual_url);
+	$tutor_url = str_replace("admin/admin_set_hours.php", "admin/admin.php", $actual_url);
+
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
+
+	include "./../common/key_validator.php";
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Admin Form</title>
+	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
+	<script type="text/javascript" src="./../common/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="admin_set_hours.js"></script>
+</head>
+<body>
+
+
+<?php
+	if(!checkValidationKey($con, $_POST['validation_key'], $_POST['pid'], 'admin', null)) {
+		echo "<script type='text/javascript'>location.href='".$validation_url."'</script>";
+	}
+
 
 //IF WE GOT TO THE PAGE VIA THE SUBMIT BUTTON, UPDATE THE DATABASE!
 	if($_POST['submit_checkbox']==true) {
@@ -22,29 +51,37 @@
 			$day = $day_array[$d];
 			for($i=7; $i<=23; $i++) {
 				if($i < 10) {
-					mysqli_query($con, "UPDATE openHours SET h0".$i."=".getClass($day.'0'.$i.'_val')." WHERE day='".$day."'");
+					mysqli_query($con, "UPDATE `openHours` SET `h0".$i."` = ".getClass($day.'0'.$i.'_val')." WHERE `day`='".$day."'");
 				}else {
-					 mysqli_query($con, "UPDATE openHours SET h".$i." =".getClass($day.$i.'_val')." WHERE day='".$day."'");
+					 mysqli_query($con, "UPDATE `openHours` SET `h".$i."` = ".getClass($day.$i.'_val')." WHERE `day`='".$day."'");
 				}
 			}
 		}
+		echo "<div id=success>Successfully Submitted Hours!</div>";
 	}
+
+
+	echo "<form method='POST' id='logout_form'>";
+		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
+
+		echo "<button type='button' onclick='goBack()'>Back to Administrator Overview Page</button>";
+		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
+		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
+	echo "</form>";
+
+
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>Admin Form</title>
-	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
-	<script type="text/javascript" src="./../common/jquery-1.10.2.min.js"></script>
-	<script type="text/javascript" src="admin_set_hours.js"></script>
-</head>
-<body>
+	<form id="set_hours_form" action="admin_set_hours.php" method="POST">
+		<?php
+			//echo the hidden fields for submission (validation key, pid)
+			echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
+			echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
+			
+			
+		?>
 
-	<?php if($_POST['submit_checkbox']==true) echo "<span id='submit_check_span' hidden=true>true</span>"; ?>
 
-	<form id="admin_form" action="admin_set_hours.php" method="post">
 		<div id="admin_div">
 		<table id="admin_table">
 			<thead>
@@ -267,7 +304,7 @@
 		}else return 'closed';
 	}
 
-	if(!$result = mysqli_query($con, "SELECT * FROM openHours")){
+	if(!$result = mysqli_query($con, "SELECT * FROM `openHours`")){
 		echo "Error ";
 		echo mysqli_error($con);
 	}

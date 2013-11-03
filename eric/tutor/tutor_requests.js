@@ -1,17 +1,6 @@
 $(document).ready(function () {
-	//set the current_pid dropdown to whatever you selected before
-	$('#current_pid').val($('#current_pid_span').html());
-	if($('#current_pid').val() == null) {
-		alert("DO NOT ACCESS THIS PAGE DIRECTLY. GO TO tutor_login.php FOR TESTING PURPOSES");
-	}
-
-	//if this triggers, we just hit submit
-	if($('#submit_check_span').html() == 'true') {
-//		alert('Successfully submitted hours!');
-		$('body').prepend("<div id=success>Successfully Submitted Hours!</div>");
-		$('#success').delay(10000).fadeOut(1000);
-	}
-
+	$('#success').delay(10000).fadeOut(1000);
+	
 	
 	//First, we'll select every <td> EXCEPT for those with the 'na' class. We'll add a dropdown to each.	
 	$("table#requests_table td").not(".na").each(function(i, e) {
@@ -62,7 +51,7 @@ $(document).ready(function () {
 	checkbox.attr("name","submit_checkbox");
 	checkbox.attr("id","submit_box_id");
 	checkbox.hide();
-	$('form').append(checkbox);
+	$('#request_form').append(checkbox);
 
 	//Now, we'll set up an event handler for a click on every cell in the table EXCEPT for headers, times down the left,
 	//	and N/A blocks where the center is not open
@@ -100,6 +89,18 @@ var clicked = function(event) {
 	else cell.find('select').val(null);			//meaning we just deselected it
 };
 
+var goBack = function() {
+	var form = $('#logout_form');
+	form.attr('action', './tutor.php');
+	form.trigger('submit');
+};
+
+var logout = function() {
+	var form = $('#logout_form');
+	form.attr('action', './../common/logout.php');
+	form.trigger('submit');
+};
+
 var submit_requests = function() {
 	$('#submit_box_id').prop('checked',true);
 };
@@ -132,7 +133,7 @@ var fill_all = function() {
 		e.removeClass();
 		e.addClass('perfect');
 		e.children('select').val(3);
-	});	
+	});
 };
 
 //fill_table takes in a jqueryified cell and checks the database_table to fill out the users view

@@ -50,6 +50,36 @@ th, td {
 	text-align: center;
 }
 
-#remove_tutor, #add_tutor{
+#add_employee, #select_employee {
+	border: thin solid black;
+	padding: .5%;
+	width: 48.5%;
+	height: 200px;
+	float: left;
+}
+
+#edit_employee {
+	border: thin solid black;
+	padding: 1%;
+	width: 97%;
+	clear: left;
+}
+
+.login {
+	float: right;
+	background-color: yellow;
+}
+
+.invalid {
+	border; solid;
+	border-color: red;
+	border-width: 3px;
+}
+
+.error_span {
+	color: red;
+}
+
+#edit_employee_form {
 	border: thin solid black;
 }
