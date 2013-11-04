@@ -4,6 +4,9 @@ table {
 	margin: 0 auto;
 	width: 100%;
 }
+tr:first-child {
+	font-weight: bold;
+}
 th, td {
 	padding: 5px;
 	text-align: center;
@@ -24,7 +27,7 @@ th, td {
 	background-color: green;
 	color:white;
 }
-.na {
+table tbody td.na {
 	background-color: #CCCCCC
 }
 
@@ -32,7 +35,7 @@ th, td {
 	background-color: black;
 }
 
-#admin_div, #request_div {
+#admin_div, #request_div, #edit_student_div, #view_schedule_div {
 	width: 50%;
 	margin: auto;
 	overflow: auto;
@@ -82,4 +85,12 @@ th, td {
 
 #edit_employee_form {
 	border: thin solid black;
+}
+
+.class_1 {
+	background-color: blue;
+}
+
+.class_2 {
+	background-color: green;
 }

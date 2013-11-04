@@ -1,10 +1,6 @@
 <?php
-	$con = mysqli_connect("localhost", "jonesep", "", "tutorScheduler");
-
-	if(mysqli_connect_errno())
-	{
-		echo "Failed connect to database: " . mysqli_connect_error() . "<br>";
-	}
+	include "./../common/database_validator.php";
+	$con = getDatabaseConnection();
 
 
 	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
@@ -12,7 +8,6 @@
 
 	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `pid` = '".$_POST['pid']."'"));
 
-	include "./../common/key_validator.php";
 ?>
 
 <!DOCTYPE html>

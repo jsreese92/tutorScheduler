@@ -17,7 +17,7 @@ var goToEditEmployees = function() {
 	var form = $('#forward');
 	var actual_url = $(location).attr('href');
 	
-	form.attr('action', actual_url.replace('admin.php', 'admin_add_edit_employees.php'));
+	form.attr('action', actual_url.replace('admin.php', 'admin_add_edit_employee.php'));
 	form.trigger('submit');
 };
 

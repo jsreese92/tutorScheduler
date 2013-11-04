@@ -1,4 +1,12 @@
 <?php
+	$con = mysqli_connect("localhost", "jonesep", "", "tutorScheduler");
+
+	function getDatabaseConnection() {
+		global $con;
+		return $con;
+	}
+
+
 	function checkValidationKey($con, $validation_key, $pid, $type_1, $type_2) {
 
 		$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$pid."'"));

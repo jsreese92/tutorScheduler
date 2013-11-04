@@ -1,12 +1,8 @@
 <?php
-	$con = mysqli_connect("localhost", "jonesep", "", "tutorScheduler");
-	if (mysqli_connect_errno())
-	{
-		echo "Failed to connect to MySQL: " . mysqli_connect_error();
-	}
-	if(!$result = mysqli_query($con, "SELECT * FROM `employeeInfo`")) {
-		echo mysqli_error($con);
-	}
+	include "./../common/database_validator.php";
+	$con = getDatabaseConnection();
+
+	$result = mysqli_query($con, "SELECT * FROM `employeeInfo`");
 
 
 	function generateKey() {
