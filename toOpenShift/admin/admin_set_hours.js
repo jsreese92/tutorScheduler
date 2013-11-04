@@ -1,4 +1,6 @@
 $(document).ready(function () {
+	$('#success').delay(10000).fadeOut(1000);
+	
 	//First, add a checkbox to each cell
 	$("table#admin_table td").not(".na").each(function(i, e) {
 		var td = $(e);
@@ -13,22 +15,18 @@ $(document).ready(function () {
 		//now let's check the database to see if it's closed during this shift
 		check_closed(td);
 	});
+	
 	//add a checkbox that will automatically check if we click the submit button, so the php script won't accidentally set the database values if we didn't mean to
 	var checkbox = $("<input type='checkbox'>");
 	checkbox.attr("name","submit_checkbox");
 	checkbox.attr("id","submit_box_id");
 	checkbox.hide();
-	$('form').append(checkbox);
+	$('#set_hours_form').append(checkbox);
+	
 	
 	//Now we'll set up the handler for each cell that isn't marked by a class "na"
 	$('table#admin_table td').not('.na').click(clicked);
 	
-	//If this triggers, it means we just hit submit
-	if($('#submit_check_span').html() == 'true') {
-//		alert('Successfully submitted hours!');
-		$('body').prepend("<div id=success>Successfully Submitted Hours!</div>");
-		$('#success').delay(10000).fadeOut(1000);
-	}
 });
 
 var clicked = function(event) {
@@ -37,6 +35,18 @@ var clicked = function(event) {
 	current_cell.toggleClass("closed");
 	current_cell.toggleClass("open");
 	current_checkbox.prop("checked", !current_checkbox.prop("checked"));
+};
+
+var goBack = function() {
+	var form = $('#logout_form');
+	form.attr('action', './admin.php');
+	form.trigger('submit');
+};
+
+var logout = function() {
+	var form = $('#logout_form');
+	form.attr('action', './../common/logout.php');
+	form.trigger('submit');
 };
 
 var clear_admin = function() {
@@ -74,7 +84,7 @@ var check_closed = function(td) {
 	var hour = name.substring(3,5);
 
 	td.removeClass();
-	td.addClass($("tr#"+day+" td."+hour+"").html());
+	td.addClass($("table#hours_database_result tr."+day+" td."+hour+"").html());
 	if(td.hasClass('closed')) {
 		td.children('input').prop('checked', false);
 	}else if(td.hasClass('open')) {
