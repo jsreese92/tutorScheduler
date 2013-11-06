@@ -1,6 +1,10 @@
 <?php
 // Create connection
-$con=mysqli_connect();
+include "./common/database_validator.php";
+$con = getDatabaseConnection();
+
+$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+$validation_url = str_replace("DBShowActual.php", "common/validator.php", $actual_url);
 
 // Check connection
 if (mysqli_connect_errno($con)){
@@ -85,9 +89,9 @@ foreach($days as $weekDay){
 foreach($days as $weekDay){
 	foreach($hours as $hrs){
 				
-			$sql = ("SELECT Fname,Lname 
-					FROM actSchedule,studentInfo 
-					WHERE (actSchedule.Day = '$weekDay' AND $hrs = '1' AND studentInfo.PID = actSchedule.PID)");
+			$sql = ("SELECT Fname,Lname, $hrs
+					FROM actSchedule,employeeInfo 
+					WHERE (actSchedule.Day = '$weekDay' AND $hrs > '0' AND employeeInfo.PID = actSchedule.PID)");
 
 			$result = mysqli_query($con,$sql);
 			$numRows = mysqli_num_rows($result);
@@ -95,8 +99,16 @@ foreach($days as $weekDay){
 			for($i = 0; $i < $numRows; $i++){
 				//Gets all first and last names for a returned row and adds each set of first and last to tempNList
 				$row = mysqli_fetch_array($result, MYSQLI_NUM); 
-				foreach($row as $value){
-					$tempName = $tempName . " " . $value;
+				foreach($row as $value){				
+					if($value == 1){
+						$tempName = $tempName . " SASB";
+					}
+					else if($value == 2){
+						$tempName = $tempName . " GLAW";
+					}
+					else{
+						$tempName = $tempName . " " . $value;
+					}
 				}
 				$tempName = $tempName . "<br>";
 				$tempNList = $tempNList . $tempName;

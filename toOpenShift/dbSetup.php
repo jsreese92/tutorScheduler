@@ -1,6 +1,6 @@
 <?php
 // Create connection on Openshift machine
-$con=mysqli_connect();
+$con=mysqli_connect("127.10.98.130","adminR4Im6WI","V16hdDRZ_SGr");
 
 // Check connection
 if (mysqli_connect_errno($con)){

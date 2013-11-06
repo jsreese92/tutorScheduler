@@ -1,6 +1,11 @@
 <?php
-// Create connection
-$con=mysqli_connect();
+//Create connection
+include "./common/database_validator.php";
+$con = getDatabaseConnection();
+
+$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+$validation_url = str_replace("DBShowPref.php", "common/validator.php", $actual_url);
+
 
 // Check connection
 if (mysqli_connect_errno($con)){
@@ -90,8 +95,8 @@ foreach($days as $weekDay){
 	foreach($hours as $hrs){
 		foreach($prefs as $num){		
 			$sql = ("SELECT Fname,Lname 
-					FROM hoursByDay,studentInfo 
-					WHERE (hoursByDay.Day = '$weekDay' AND $hrs = '$num' AND studentInfo.PID = hoursByDay.PID)");
+					FROM hoursByDay,employeeInfo 
+					WHERE (hoursByDay.Day = '$weekDay' AND $hrs = '$num' AND employeeInfo.PID = hoursByDay.PID)");
 
 			$result = mysqli_query($con,$sql);
 			$numRows = mysqli_num_rows($result);

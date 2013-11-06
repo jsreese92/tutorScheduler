@@ -165,6 +165,7 @@
 			mysqli_query($con, "UPDATE `employeeInfo` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
 			//update hoursByDay
 			mysqli_query($con, "UPDATE `hoursByDay` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
+			mysqli_query($con,"UPDATE `actSchedule` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
 		}
 	}
 //WE GOT HERE VIA CHANGING A TUTOR'S HOURS
@@ -195,7 +196,7 @@
 	echo "<form method='POST' id='logout_form'>";
 		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
 
-		echo "<button type='button' onclick='goBack()'>Back to Adminstrator Overview Page</button>";
+		echo "<button type='button' onclick='goBack()'>Back to Administrator Overview Page</button>";	
 		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
 		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
 	echo "</form>";

@@ -6,7 +6,7 @@
  <body>
 <?php 
 // Create connection on Jordan's machine
-$con=mysqli_connect("localhost","root","???Jrizzle343756");
+$con=mysqli_connect("127.10.98.130","adminR4Im6WI","V16hdDRZ_SGr");
 
 // Check connection
 if (mysqli_connect_errno($con)){

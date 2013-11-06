@@ -1,5 +1,5 @@
 <?php
-	$con = mysqli_connect("localhost", "jonesep", "", "tutorScheduler");
+	$con = mysqli_connect("127.10.98.130","adminR4Im6WI","V16hdDRZ_SGr", "tutorScheduler");
 
 	function getDatabaseConnection() {
 		global $con;
