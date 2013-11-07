@@ -14,7 +14,7 @@
 <form method = 'POST'>
 
 <?php	
-	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$login_url = str_replace("common/validator.php", "common/login.php", $actual_url);
 	$tutor_url = str_replace("common/validator.php", "tutors/tutors.php", $actual_url);
 	$admin_url = str_replace("common/validator.php", "admin/admin.php", $actual_url);

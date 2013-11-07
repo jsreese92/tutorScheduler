@@ -3,7 +3,7 @@
 	$con = getDatabaseConnection();
 
 
-	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$validation_url = str_replace("tutor/tutor.php", "common/validator.php", $actual_url);
 
 	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `pid` = '".$_POST['pid']."'"));

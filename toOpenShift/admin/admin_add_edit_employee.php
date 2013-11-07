@@ -2,7 +2,7 @@
 	include "./../common/database_validator.php";
 	$con = getDatabaseConnection();
 
-	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$validation_url = str_replace("admin/admin_add_edit_employee.php", "common/validator.php", $actual_url);
 
 	$expired = false;

@@ -3,7 +3,7 @@
 	$con = getDatabaseConnection();
 
 
-	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$validation_url = str_replace("admin/admin_set_hours.php", "common/validator.php", $actual_url);
 	$tutor_url = str_replace("admin/admin_set_hours.php", "admin/admin.php", $actual_url);
 
