@@ -1,6 +1,6 @@
 <?php
 // Create connection on Openshift machine
-$con=mysqli_connect();
+$con=mysqli_connect("127.10.98.130","adminR4Im6WI","V16hdDRZ_SGr");
 
 // Check connection
 if (mysqli_connect_errno($con)){
@@ -25,31 +25,31 @@ else {
   echo "Error setting database: " . mysqli_error($con) . "<br>";
 }
 
-// Drop studentInfo if previously there
-$sql="drop table if exists studentInfo";
+// Drop employeeInfo if previously there
+$sql="drop table if exists employeeInfo";
 if(mysqli_query($con,$sql)){
-  echo "Deleted previously existing studentInfo table <br>";
+  echo "Deleted previously existing employeeInfo table <br>";
 }
 
-// Create student info
-$sql="create table studentInfo (
+// Create employee info
+$sql="create table employeeInfo (
   PID INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (PID),
-  Fname VARCHAR(30), Lname VARCHAR(30))";
+  Fname VARCHAR(30), Lname VARCHAR(30), type VARCHAR(5))";
 
 if (mysqli_query($con,$sql)){
-  echo "Table studentInfo created successfully <br>";
+  echo "Table employeeInfo created successfully <br>";
 }
 else{
   echo "Error creating table: " . mysqli_error($con) . "<br>";
 }
 
-// Populate studentInfo with initial data
-$sql="load data local infile './testStudent.txt' into table studentInfo 
+// Populate employeeInfo with initial data
+$sql="load data local infile './testEmployee.txt' into table employeeInfo 
   fields terminated by ','";
 
 if (mysqli_query($con,$sql)){
-  echo "studentInfo loaded successfully <br>";
+  echo "employeeInfo loaded successfully <br>";
 }
 else{
   echo "Error loading data: " . mysqli_error($con) . "<br>";
@@ -142,15 +142,16 @@ else{
 }
 
 // Populate actSchedule with initial data
-$sql="load data local infile './testMaster.txt' into table openHours 
+$sql="load data local infile './testMaster.txt' into table actSchedule 
   fields terminated by ','";
 
 if (mysqli_query($con,$sql)){
-  echo "openHours loaded successfully.<br>";
+  echo "actSchedule loaded successfully.<br>";
 }
 else{
   echo "Error loading data: " . mysqli_error($con) . "<br>";
 }
+
 
 /* old way of doing variables
 $sql="create table sampleData (
