@@ -27,4 +27,5 @@ function printHoursByDay($theCon){
     echo("<br>");
   }
 }
+printHoursByDay($con);
 ?>
