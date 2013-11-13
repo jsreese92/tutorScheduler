@@ -1,0 +1,3 @@
+Be sure to change the database connection at the top of both common/onyen_validator.php AND common/session_validator.php AND common/login_fake.php All other files should be fine.
+
+ALSO remember to change the setcookie() commands to use the current domain and a secure flag! The files that will need that changed are common/onyen_validator.php, common/session_validator.php, common/logout.php, and common/login_fake.php
