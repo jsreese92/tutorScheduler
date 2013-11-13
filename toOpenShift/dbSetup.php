@@ -152,25 +152,6 @@ else{
   echo "Error loading data: " . mysqli_error($con) . "<br>";
 }
 
-// Drop validationRecords if previously there
-$sql="drop table if exists validationRecords";
-if(mysqli_query($con,$sql)){
-  echo "Deleted previously existing validationRecords table <br>";
-}
-
-// Create validationRecords
-$sql="create table validationRecords (
-  `key` VARCHAR(16),
-  PRIMARY KEY (`key`),
-  `PID` INT, `expire` INT)";
-  
-if (mysqli_query($con,$sql)){
-  echo "Table validationRecords created successfully.<br>";
-}
-else{
-  echo "Error creating table: " . mysqli_error($con) . "<br>";
-}
-//no need to populate validationRecords with any data
 
 /* old way of doing variables
 $sql="create table sampleData (
