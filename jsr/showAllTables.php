@@ -13,8 +13,8 @@ if (!mysqli_query($con,$sql)){
   echo "Error setting database: " . mysqli_error($con) . "<br>";
 }
 
-function printHoursByDay($theCon){
-  $sql = ("select * from hoursByDay"); // Get result of query
+function printTable($theCon, $tableName){
+  $sql = ("select * from $tableName"); // Get result of query
   $result = mysqli_query($theCon,$sql);
   $numRows = mysqli_num_rows($result);
 
@@ -27,5 +27,12 @@ function printHoursByDay($theCon){
     echo("<br>");
   }
 }
-printHoursByDay($con);
+echo("hours by day: <br>");
+printTable($con,"hoursByDay");
+echo("employee info: <br>");
+printTable($con,"employeeInfo");
+echo("open hours: <br>");
+printTable($con,"openHours");
+echo("act schedule: <br>");
+printTable($con,"actSchedule");
 ?>
