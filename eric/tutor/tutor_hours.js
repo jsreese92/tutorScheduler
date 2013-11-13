@@ -47,15 +47,10 @@ $(document).ready(function() {
 	$("#view_schedule_div").append(table);
 });
 
-
 var goBack = function() {
-	var form = $('#logout_form');
-	form.attr('action', './tutor.php');
-	form.trigger('submit');
+	window.location = './tutor.php';
 };
 
 var logout = function() {
-	var form = $('#logout_form');
-	form.attr('action', './../common/logout.php');
-	form.trigger('submit');
+	window.location = './../common/logout.php';
 };

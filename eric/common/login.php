@@ -1,6 +1,6 @@
 <?php
 	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$target_url = str_replace("login.php", "validator.php", $actual_url);
+	$target_url = str_replace("login.php", "onyen_validator.php", $actual_url);
 ?>
 
 <html>

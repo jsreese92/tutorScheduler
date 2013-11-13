@@ -1,17 +1,8 @@
 <?php
-	include "./../common/database_validator.php";
+	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
-
-	$actual_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$validation_url = str_replace("admin/admin_add_edit_employee.php", "common/validator.php", $actual_url);
-
-	$expired = false;
-	if(!checkValidationKey($con, $_POST['validation_key'], $_POST['pid'], 'admin', null)) {
-		echo "<script type='text/javascript'>location.href='".$validation_url."'</script>";
-		$expired = true;
-	}
-
-	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
+	
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_SESSION['pid']."'"));
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +18,7 @@
 <?php
 
 //IF WE GOT TO THE PAGE VIA THE ADD BUTTON, UPDATE THE DATABASE!
-	if($_POST['new_pid'] != null && !$expired) {
+	if($_POST['new_pid'] != null) {
 		$unique = true;
 		
 		$new_Fname = $_POST['new_Fname'];
@@ -120,11 +111,10 @@
 			$grad_selected = '';
 			$ugrad_selected = '';
 			$admin_selected = '';
-
 		}
 	}
-//IF WE GOT HERE VIA THE REMOVE BUTTON, REMOVE THE TUTOR!
-	if($_POST['delete_pid'] != null && !$expired) {
+//IF WE GOT HERE VIA THE REMOVE BUTTON, REMOVE THE EMPLOYEE!
+	if($_POST['delete_pid'] != null) {
 		$temp = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['delete_pid']."'"));
 		echo "<div id='success'>Successfully removed ".$temp[1]." ".$temp[2]." from the database!</div>";
 		
@@ -138,7 +128,7 @@
 
 	
 //IF WE GOT HERE VIA SUBMITTING AN EDIT
-	if($_POST['edit_pid'] != null && !$expired) {
+	if($_POST['edit_pid'] != null) {
 		$unique = true;
 
 		//check if the given employee is already in the table
@@ -165,10 +155,12 @@
 			mysqli_query($con, "UPDATE `employeeInfo` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
 			//update hoursByDay
 			mysqli_query($con, "UPDATE `hoursByDay` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
+			//update actSchedule
+			mysqli_query($con, "UPDATE `actSchedule` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
 		}
 	}
 //WE GOT HERE VIA CHANGING A TUTOR'S HOURS
-	if($_POST['mon07'] != null && !$expired) {
+	if($_POST['mon07'] != null) {
 		$tutor_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['tutor_pid']."'"));
 		
 		function getVal($val) {
@@ -191,22 +183,16 @@
 		echo "<div id=success>Successfully Changed ".$tutor_info[1]." ".$tutor_info[2]."'s Schedule!</div>";
 	}
 
-
-	echo "<form method='POST' id='logout_form'>";
-		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
-
-		echo "<button type='button' onclick='goBack()'>Back to Adminstrator Overview Page</button>";
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-	echo "</form>";
-
+	//the go back/logout bar
+	echo "<div><strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>" .
+		"<button onclick='goBack()'>Back to Administrator Overview Page</button></div>";
 
 ?>
 
 
 	<div id="add_employee">
 	<h3>Add Employee</h3>
-	<form id="new_employee_form" action="admin_add_edit_employee.php" method="post">
+	<form id="new_employee_form" action="admin_add_edit_employees.php" method="post">
 		<span class="input_span">First Name:</span><input type="text" name="new_Fname" value="<?php echo $new_Fname; ?>">
 		<br>
 		<span class="input_span">Last Name:</span><input type="text" name="new_Lname" value="<?php echo $new_Lname; ?>">
@@ -220,17 +206,12 @@
 							</select>
 		<br>
 		<button id="submit" type="submit">Add</button>
-		
-		<?php 
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-		?>
 	</form>
 	</div>
 
 	<div id="select_employee">
 	<h3>Edit Employee</h3>
-	<form id="select_employee_form" action="admin_add_edit_employee.php" method="post">
+	<form id="select_employee_form" action="admin_add_edit_employees.php" method="post">
 		<strong>Please note that you cannot edit your own information</strong><br>
 		<select name='employee_pid'>
 			<?php
@@ -251,17 +232,13 @@
 							$type = 'Administrator';
 							break;
 					}
-					if($row[0] != $_POST['pid'])
+					if($row[0] != $_SESSION['pid'])	//make sure this person isn't the current user before adding them to the dropdown
 						echo "<option value=".$row[0].">".$row[2].", ".$row[1]." (".$type.")</option>\n";
 				}
 			?>
 		</select>
 		<button submit='submit'>Go</button>
 		<br>
-		<?php 
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-		?>
 	</form>
 	</div>
 	
@@ -273,10 +250,8 @@
 
 		$employee = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['employee_pid']."'"));
 		
-		echo "<form id='delete_employee_form' method='POST'><strong>".$employee[1]." ".$employee[2]."</strong>";
-		echo "<input type='hidden' name='delete_pid' value='".$employee[0]."'><button type='submit'>Delete Employee</button>";
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'></form>";
+		echo "<form id='delete_employee_form' action='admin_add_edit_employees.php' method='POST'><strong>".$employee[1]." ".$employee[2]."</strong>";
+		echo "<input type='hidden' name='delete_pid' value='".$employee[0]."'><button type='submit'>Delete Employee</button></form>";
 
 		switch($employee[3]) {
 			case 'grad':
@@ -289,7 +264,7 @@
 
 	?>
 		<br>
-		<form id="edit_employee_form" action="admin_add_edit_employee.php" method="post">
+		<form id="edit_employee_form" action="admin_add_edit_employees.php" method="post">
 			<input type='hidden' name='old_pid' value='<?php echo $employee[0] ?>'>
 			
 			<span class="input_span">First Name:</span><input type="text" name="edit_Fname" value="<?php echo $employee[1]; ?>">
@@ -304,21 +279,13 @@
 									</select>
 			<?php } ?>
 			<button id="submit" type="submit">Submit Information</button>
-			<?php 
-			echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-			echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-			?>
 		</form>
 		<br>
 	<?php if($employee[3] != 'admin') { ?>
 		<!--If they aint an admin, we'll put the tutor's hours here so they can be edited! -->
 		<div id="edit_student_div">
-		<form id="tutor_schedule_adjust" method="post">
-			
-			
+		<form id="tutor_schedule_adjust" action="admin_add_edit_employees.php" method="post">
 			<input type='hidden' name='tutor_pid' value=' <?php echo $employee[0]; ?> '>
-			<input type='hidden' name = 'pid' value='<?php echo $_POST['pid']; ?>'>
-			<input type='hidden' name = 'validation_key' value='<?php echo $_POST['validation_key']; ?>'>
 			
 		</form>
 		</div>

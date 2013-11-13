@@ -90,15 +90,11 @@ var clicked = function(event) {
 };
 
 var goBack = function() {
-	var form = $('#logout_form');
-	form.attr('action', './tutor.php');
-	form.trigger('submit');
+	window.location = './tutor.php';
 };
 
 var logout = function() {
-	var form = $('#logout_form');
-	form.attr('action', './../common/logout.php');
-	form.trigger('submit');
+	window.location = './../common/logout.php';
 };
 
 var submit_requests = function() {
@@ -125,15 +121,6 @@ var reset_requests = function() {
 			fill_table($(e));
 		});		
 	}	
-};
-
-var fill_all = function() {
-	$("table#requests_table td").not(".na").each(function(i, td) {
-		var e = $(td);
-		e.removeClass();
-		e.addClass('perfect');
-		e.children('select').val(3);
-	});
 };
 
 //fill_table takes in a jqueryified cell and checks the database_table to fill out the users view

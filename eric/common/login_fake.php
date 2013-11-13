@@ -1,8 +1,34 @@
 <?php
-	include "./../common/database_validator.php";
-	$con = getDatabaseConnection();
+	$con = mysqli_connect("localhost", "jonesep", "", "tutorScheduler");
 
 	$result = mysqli_query($con, "SELECT * FROM `employeeInfo`");
+	$admin_url = "http://$_SERVER[HTTP_HOST]/admin/admin.php";
+	$tutor_url = "http://$_SERVER[HTTP_HOST]/tutor/tutor.php";
+	
+	if($_POST['pid'] != null) {
+			session_start();
+			
+			//generate an authorization cookie and setup the session data
+			$_SESSION['pid'] = $_POST['pid'];
+			$_SESSION['authsalt'] = time() . substr(md5(rand()), 0, 16);
+			
+			$expire = time() + 450;
+			$cookie_data = md5($_SESSION['pid'] . $_SERVER['REMOTE_ADDR'] . $_SESSION['authsalt']);
+			
+			setcookie('TutorSchedulerAuth', $cookie_data, $expire, '/');
+			
+			$result = mysqli_fetch_array(mysqli_query($con, "SELECT `type` FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
+			
+			switch($result[0]) {
+				case 'admin':
+					echo "<script>location.href='$admin_url'</script>";
+					break;
+				case 'ugrad':
+				case 'grad':
+					echo "<script>location.href='$tutor_url'</script>";
+					break;
+			}
+	}
 ?>
 
 
@@ -14,7 +40,7 @@
 </head>
 <body>
 	Select an employee to log in as:
-	<form id='selection' method="post" action="login_fake_validator.php">
+	<form id='selection' method="post" action="login_fake.php">
 		<select name="pid">
 			<?php
 				while($row = mysqli_fetch_array($result)) {
@@ -23,10 +49,6 @@
 			?>
 		</select>
 		<br>
-		<select name="target">
-			<option value='ugrad'>Tutor</option>
-			<option value='admin'>Admin</option>
-		</select>
 		<button type='submit'>Submit</button>
 	</form>
 

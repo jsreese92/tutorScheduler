@@ -38,15 +38,11 @@ var clicked = function(event) {
 };
 
 var goBack = function() {
-	var form = $('#logout_form');
-	form.attr('action', './admin.php');
-	form.trigger('submit');
+	window.location = './admin.php';
 };
 
 var logout = function() {
-	var form = $('#logout_form');
-	form.attr('action', './../common/logout.php');
-	form.trigger('submit');
+	window.location = './../common/logout.php';
 };
 
 var clear_admin = function() {
