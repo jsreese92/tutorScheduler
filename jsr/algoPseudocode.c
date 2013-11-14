@@ -15,6 +15,7 @@ preference 3Darray = (populate this via SQL) [day][hour][tuple list];
 tempSchedule 3Darray = [day][hour][tuple list];
 hoursWorking = array[PID];  // array the key for which is PID, value is hours 
                             // scheduled
+pidList = array[index]; // just a list of every student's PID                       
 
 function populateGrad(prefNum)
 for each day
@@ -69,12 +70,81 @@ countArray = array[day][PID]; // key is PID, value is number hours working that 
 // initialize countArray
 for each day in tempSchedule{
   for each hour{
-    for each PID
-      if tuple.PID = PID
-        countArray[day][PID]++;
+    for each tuple{ // look through each tuple
+      for each PID in pidList // see if that tuple matches someone in pidList
+        if tuple.PID = PID // if so, add to count of hours worked that day
+          countArray[day][PID]++;
+    }
   }
 }
 
+boolean onesExhausted = false
+boolean twosExhausted = false
+boolean done = false
+
+for each day in countArray{
+  while(!done){
+    for each PID{
+      while(!done){
+        for each hour in tempSchedule[day] while (!done){
+          for each tuple while (!done){
+            if(!onesExhausted){
+              if(exist(1,PID,day)){ // scans through a day's tuples, if there are
+                // tuples in tempSchedule for a given PID on given day for given
+                // preference, returns true
+                if tuple.PID = PID{
+                  add tuple back to preference; //since they are now available
+                  remove tuple from tempSchedule;
+                  hoursWorking[PID]-=1;
+                  countArray[day][PID]-=1;
+                  if countArray[day][PID] < 5{
+                    done = true;
+                  }
+                }
+              }
+              else
+                onesExhausted = true;
+            }
+            if(onesExhausted and !twosExhausted){
+              if(exist(2,PID,day)){
+                if tuple.PID = PID{
+                  add tuple to preference;
+                  remove tuple from tempschedule;
+                  hoursWorking[PID]-=1;
+                  countArray[day][PID]-=1;
+                  if countArray[day][PID] < 5{
+                    done = true;
+                  }
+                }
+              }
+              else
+                twosExhausted = true;
+            }
+
+            // should never be the case where all 3s are exhausted, that 
+            // would mean they weren't working any hours
+            
+            if(onesExhausted and twosExhausted){
+              // there should always at least be 3s, so just remove 3s until
+              // the count is less than 5
+              if tuple.PID = PID{
+                add tuple to preferences;
+                remove tuple from tempSchedule;
+                hoursWorking[PID]-=1;
+                countArray[day][PID]-=1;
+                if countArray[day][PID] < 5{
+                  done = true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/*
 for each day in countArray{
   for each PID{ // in order of hours working, greatest to least
     // take 1s off as long as they're working more than 5 in a day
@@ -93,3 +163,4 @@ for each day in countArray{
     }
   }
 }
+*/
