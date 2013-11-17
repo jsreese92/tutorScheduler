@@ -45,7 +45,7 @@ else{
 }
 
 // Populate employeeInfo with initial data
-$sql="load data local infile './testEmployee.txt' into table employeeInfo 
+$sql="load data local infile './TutorPreferences.txt' into table employeeInfo 
   fields terminated by ','";
 
 if (mysqli_query($con,$sql)){
