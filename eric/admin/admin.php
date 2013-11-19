@@ -24,7 +24,8 @@
 	echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
 
 	echo "<button type='button' onclick='goToSetHours()'>Set Writing Center Hours</button><br>";
-	echo "<button type='button' onclick='goToEditEmployees()'>Add/Edit/Remove Employees</button>";
+	echo "<button type='button' onclick='goToEditEmployees()'>Add/Edit/Remove Employees</button><br>";
+	echo "<button type='button' onclick='goToRequests()'>View All Requests</button>";
 ?>
 
 
