@@ -25,7 +25,7 @@
 <?php
 	//the go back/logout bar
 	echo "<div><strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>" .
-		"<button onclick='goBack()'>Back to Administrator Overview Page</button></div>";
+		"<button onclick='goBack()'>Back to Tutor Overview Page</button></div>";
 ?>
 	
 	<div id="view_schedule_div">

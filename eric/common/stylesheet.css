@@ -1,4 +1,3 @@
-@CHARSET "ISO-8859-1";
 
 table {
 	margin: 0 auto;
@@ -74,7 +73,7 @@ table tbody td.na {
 }
 
 .invalid {
-	border; solid;
+	border: solid;
 	border-color: red;
 	border-width: 3px;
 }
@@ -93,4 +92,13 @@ table tbody td.na {
 
 .class_2 {
 	background-color: green;
+}
+
+#tutor_select, #tutor_requests, #tutor_schedule {
+	float: left;
+	border: thin solid black;
+}
+
+span.nav:hover {
+	background: #97D984;
 }
