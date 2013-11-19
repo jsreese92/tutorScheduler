@@ -162,11 +162,52 @@ foreach($days as $theDay){
       $temp->setPid($row["PID"]);
       $temp->setTheType($row["type"]);
       $temp->setPref("$row[$theHour]");
-      $preferences[$theDay][$theHour]["tuples"][]=$temp;
+      // associative array where an employee's PID points to his/her tuple
+      $preferences[$theDay][$theHour]["tuples"][$row["PID"]]=$temp;
     }
   }
 }
+echo"preferences: <br>\n";
 var_dump($preferences);
+
+// 1. SASB covered for all open hours
+$sasbSchedule = initializeTupleArray();
+$pidArray = getPids($con);
+
+// array where key is PID and value is number of hours currently scheduled
+// TODO factor out into function
+$hoursWorking = array();
+foreach($pidArray as $thePid){
+  $hoursWorking[$thePid] = 0; // initialized to 0
+}
+
+function getPids($theCon){
+  $arr = array();
+  $sql = ("select PID from employeeInfo");
+  $result = mysqli_query($theCon,$sql);
+  $numRows = mysqli_num_rows($result);
+  for($i = 0; $i<$numRows; $i++){
+    $row = mysqli_fetch_array($result, MYSQLI_BOTH);
+    $arr[]=$row["PID"]; // adds PID to array
+  }
+  return $arr;
+}
+
+// pass $theArray by reference via '&' character
+function removeTuple(&$theArray, $theDay, $theHour, $thePid){
+ unset($theArray[$theDay][$theHour]["tuples"][$thePid]);
+}
+echo"removed 711582983: <br>\n";
+removeTuple($preferences, "sun", "h16", "711582983");
+var_dump($preferences);
+
+// min and max specify the minimum and maximum number of employees working
+function populateHour($theDay, $theHour, $min, $max){
+}
+
+function populateTuples($thePref, $theType){
+}
+
 
 /* testing, delete
 $tuples=array();
