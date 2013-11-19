@@ -93,11 +93,6 @@ function initializeHours(){
   return $day; // array of hours
 }
 
-/*
-var_dump(initializeDay("sun"));
-echo "<br>";
- */
-
 function initializeTupleArray(){
   $arr = array(
     "sun" => initializeDay("sun"),
@@ -111,8 +106,67 @@ function initializeTupleArray(){
   return $arr;
 }
 
-var_dump(initializeTupleArray());
-echo "<br>";
+// tuple for an individual's preference on a given day and hour
+class tuple {
+  public $pid;
+  public $type; // ugrad or grad
+  public $pref; // preference number
+
+  public function setPid($newPid){
+    $this->pid=$newPid;
+  }
+  public function getPid(){
+    return $this->pid;
+  }
+  public function setTheType($newType){
+    $this->type=$newType;
+  }
+  public function getTheType(){
+    return $this->type;
+  }
+  public function setPref($newPref){
+    $this->pref=$newPref;
+  }
+  public function getPref(){
+    return $this->pref;
+  }
+}
+
+$preferences = initializeTupleArray();
+$days = array(sun,mon,tue,wed,thu,fri,sat);
+$hours = array(h00,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23);
+$availablePrefs = array(1,2,3);
+
+/*
+$sql =("select hoursByDay.*, employeeInfo.type from hoursByDay, employeeInfo where hoursByDay.PID = employeeInfo.PID");
+$result = mysqli_query($con,$sql);
+$numRows = mysqli_num_rows($result);
+*/
+
+// populate array of tuples via a wildly ineffecient querying scheme
+foreach($days as $theDay){
+  foreach($hours as $theHour){
+    $sql = ("select hoursByDay.PID,employeeInfo.type,hoursByDay.$theHour
+      from hoursByDay, employeeInfo
+      where (hoursByDay.day = '$theDay' and $theHour > 0 and 
+      hoursByDay.PID = employeeInfo.PID)");
+
+    $result = mysqli_query($con,$sql);
+    $numRows = mysqli_num_rows($result);
+
+    for($i = 0; $i < $numRows; $i++){ // for every row
+      // get the array from result indexed by both numbers and variable name
+      $row = mysqli_fetch_array($result, MYSQLI_BOTH); 
+      //var_dump($row); 
+      $temp= new tuple;
+      $temp->setPid($row["PID"]);
+      $temp->setTheType($row["type"]);
+      $temp->setPref("$row[$theHour]");
+      $preferences[$theDay][$theHour]["tuples"][]=$temp;
+    }
+  }
+}
+var_dump($preferences);
 
 /* testing, delete
 $tuples=array();
@@ -182,45 +236,4 @@ $preferences = array(
 $preferences["sun"]["h00"]["tuples"] = $tuples;
 //var_dump($preferences["sun"]["h00"]["tuples"]);
  */
-
-// tuple for an individual's preference on a given day and hour
-class tuple {
-  public $pid;
-  public $type; // ugrad or grad
-  public $pref; // preference number
-
-  public function setPid($newPid){
-    $this->pid=$newPid;
-  }
-  public function getPid(){
-    return $this->pid;
-  }
-  public function setTheType($newType){
-    $this->type=$newType;
-  }
-  public function getTheType(){
-    return $this->type;
-  }
-
-  public function setPref($newPref){
-    $this->pref=$newPref;
-  }
-  public function getPref(){
-    return $this->pref;
-  }
-}
-
-$sql = ("select * from hoursByDay"); // Get result of query
-$result = mysqli_query($con,$sql);
-$numRows = mysqli_num_rows($result);
-
-// populate array of tuples
-for($i = 0; $i < $numRows; $i++){
-  // get the array from result indexed by numbers
-  $row = mysqli_fetch_array($result, MYSQLI_NUM); 
-  foreach($row as $value){
-    // printf("%s, ", $value);
-  }
-  echo("<br>");
-}
 ?>
