@@ -8,12 +8,113 @@ if (mysqli_connect_errno($con)){
   echo "Failed to connect to MySQL: " . mysqli_connect_error();
 }
 
-//TODO
-function initializeDays($theDay){
+// given a day of the week, initializes its preference array
+function initializeDay($theDay){
+  // array that's name is the day of the week
+  ${$theDay} = initializeHours();
+  return ${$theDay};
+}
+
+function initializeHours(){
+  $day = array(
+    "h00" => array(
+      "tuples" => array()
+    ),
+    "h01" => array(
+      "tuples" => array()
+    ),
+    "h02" => array(
+      "tuples" => array()
+    ),
+    "h03" => array(
+      "tuples" => array()
+    ),
+    "h04" => array(
+      "tuples" => array()
+    ),
+    "h05" => array(
+      "tuples" => array()
+    ),
+    "h06" => array(
+      "tuples" => array()
+    ),
+    "h07" => array(
+      "tuples" => array()
+    ),
+    "h08" => array(
+      "tuples" => array()
+    ),
+    "h09" => array(
+      "tuples" => array()
+    ),
+    "h10" => array(
+      "tuples" => array()
+    ),
+    "h11" => array(
+      "tuples" => array()
+    ),
+    "h12" => array(
+      "tuples" => array()
+    ),
+    "h13" => array(
+      "tuples" => array()
+    ),
+    "h14" => array(
+      "tuples" => array()
+    ),
+    "h15" => array(
+      "tuples" => array()
+    ),
+    "h16" => array(
+      "tuples" => array()
+    ),
+    "h17" => array(
+      "tuples" => array()
+    ),
+    "h18" => array(
+      "tuples" => array()
+    ),
+    "h19" => array(
+      "tuples" => array()
+    ),
+    "h20" => array(
+      "tuples" => array()
+    ),
+    "h21" => array(
+      "tuples" => array()
+    ),
+    "h22" => array(
+      "tuples" => array()
+    ),
+    "h23" => array(
+      "tuples" => array()
+    )
+  );
+  return $day; // array of hours
+}
+
+/*
+var_dump(initializeDay("sun"));
+echo "<br>";
+ */
+
+function initializeTupleArray(){
+  $arr = array(
+    "sun" => initializeDay("sun"),
+    "mon" => initializeDay("mon"),
+    "tue" => initializeDay("tue"),
+    "wed" => initializeDay("wed"),
+    "thu" => initializeDay("thu"),
+    "fri" => initializeDay("fri"),
+    "sat" => initializeDay("sat")
+  );
   return $arr;
 }
 
-// testing, delete
+var_dump(initializeTupleArray());
+echo "<br>";
+
+/* testing, delete
 $tuples=array();
 $test = new tuple;
 $test->setPid("test");
@@ -79,7 +180,8 @@ $preferences = array(
 );
 
 $preferences["sun"]["h00"]["tuples"] = $tuples;
-var_dump($preferences["sun"]["h00"]["tuples"]);
+//var_dump($preferences["sun"]["h00"]["tuples"]);
+ */
 
 // tuple for an individual's preference on a given day and hour
 class tuple {
