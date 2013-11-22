@@ -55,35 +55,35 @@
 		echo "</tbody></table>\n";
 	}
 ?>
-		<!--Insert table from open hours database-->
-		<table id="hours_database_result" hidden>
-		<tbody>
-		<?php
+<!--Insert table from open hours database-->
+<table id="hours_database_result" hidden>
+<tbody>
+<?php
+
+	function numToClass($val) {
+		if($val==1) { 
+			return 'open';
+		}else return 'closed';
+	}
+
+	if(!$result = mysqli_query($con, "SELECT * FROM `openHours`")){
+		echo "Error ";
+		echo mysqli_error($con);
+	}
+	
+	//populate the table with the values from the database
+	while($row = mysqli_fetch_array($result)) {
+		echo "<tr class='".$row[0]."'>";
+		for($i=1; $i<18; $i++) {
+			if($i < 4) {
+				echo "<td class='0".($i+6)."'>".numToClass($row[$i])."</td>";
+			}else echo "<td class='".($i+6)."'>".numToClass($row[$i])."</td>";
+		}
+		echo "</tr>\n";
+		}
 		
-			function numToClass($val) {
-				if($val==1) { 
-					return 'open';
-				}else return 'closed';
-			}
-		
-			if(!$result = mysqli_query($con, "SELECT * FROM `openHours`")){
-				echo "Error ";
-				echo mysqli_error($con);
-			}
-			
-			//populate the table with the values from the database
-			while($row = mysqli_fetch_array($result)) {
-				echo "<tr class='".$row[0]."'>";
-				for($i=1; $i<18; $i++) {
-					if($i < 4) {
-						echo "<td class='0".($i+6)."'>".numToClass($row[$i])."</td>";
-					}else echo "<td class='".($i+6)."'>".numToClass($row[$i])."</td>";
-				}
-				echo "</tr>\n";
-			}
-		
-		?>
-		</tbody></table>
+?>
+</tbody></table>
 
 </form>
 </body>

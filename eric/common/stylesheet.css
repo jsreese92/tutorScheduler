@@ -87,11 +87,11 @@ table tbody td.na {
 }
 
 .class_1 {
-	background-color: blue;
+	background-color: #9EA1FF;
 }
 
 .class_2 {
-	background-color: green;
+	background-color: #97D984;
 }
 
 #tutor_select, #tutor_requests, #tutor_schedule {
@@ -101,4 +101,15 @@ table tbody td.na {
 
 span.nav:hover {
 	background: #97D984;
+}
+
+span.selected_span {
+	background: #97D984;
+}
+
+span.sasb {
+	color: blue;
+}
+span.greenlaw {
+	color: green;
 }
