@@ -197,7 +197,7 @@
 		<strong>Please note that you cannot edit your own information</strong><br>
 		<select name='employee_pid'>
 			<?php
-				if(!$result = mysqli_query($con, "SELECT * FROM `employeeInfo`")) {
+				if(!$result = mysqli_query($con, "SELECT * FROM `employeeInfo` ORDER BY `Lname`, `Fname`")) {
 					echo mysqli_error($con);
 				}
 				
