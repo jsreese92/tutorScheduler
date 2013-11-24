@@ -2,7 +2,7 @@ $(document).ready(function() {
 	
 	//create the table for viewing current schedule
 	var current_schedule_div = $('div#tutor_schedule');
-
+	
 	var table = $("<table id='schedule'></table>");
 	var body = $("<tbody></tbody>");
 	table.append(body);
@@ -39,7 +39,9 @@ $(document).ready(function() {
 				if($("table#hours_database_result tr."+day+" td."+hour+"").html() == 'closed') {
 					td.addClass('na');
 				}else {
+					td.attr('title', '');
 					td.attr('data-daytime', new_class);
+					td.click(change_schedule);
 				}
 				new_row.append(td);
 			}
@@ -47,7 +49,14 @@ $(document).ready(function() {
 		body.append(new_row);
 	}
 	
-	current_schedule_div.append("<strong>Current schedule:");
+	var radio = $("<input name='location' value='0' id='unschedule_radio' type='radio'><label for='unschedule_radio' checked>Unschedule</label>");
+	radio.attr('checked',true);
+	current_schedule_div.append(radio);
+	var radio = $("<span class = 'class_1'><input name='location' value='1' id='sasb_radio' type='radio'><label for='sasb_radio'>SASB</label></span>");
+	current_schedule_div.append(radio);
+	var radio = $("<span class = 'class_2'><input name='location' value='2' id='green_radio' type='radio'><label for='green_radio'>Greenlaw</label></span>");
+	current_schedule_div.append(radio);
+
 	current_schedule_div.append(table);
 	
 	//fill out all the numbers for each location
@@ -64,6 +73,48 @@ $(document).ready(function() {
 	$("span.nav").click(switch_tutor);
 	
 });
+
+var change_schedule = function() {
+	var pid = $("#tutor_select span.selected_span").attr('data-pid');
+	//if they haven't selected a tutor yet, we'll just return immediately
+	if(pid == undefined) return;
+	
+	var daytime = $(this).attr('data-daytime');
+	var location = $("input[name='location']:checked").val();
+	
+	var data_sent = {};
+	data_sent.pid = pid;
+	data_sent.daytime = daytime;
+	data_sent.location = location;
+
+	$.ajax('tutorHours.php',
+			{type: 'POST',
+			 cache: false,
+			 data: data_sent,
+			 success: updateScheduleSuccess,
+			 error: function () {
+				alert('failure');}
+			});
+};
+var updateScheduleSuccess = function(data, status, jqxhr) {
+	var cell = $("#schedule td[data-daytime='"+data.daytime+"']");
+	
+	cell.removeClass('class_-1');
+	cell.removeClass('class_0');
+	cell.removeClass('class_1');
+	cell.removeClass('class_2');
+	
+	cell.addClass(data.location);
+	
+	//update the numbers listed in this cell
+	cell.empty();
+	cell.append("<span class='sasb'>" + data.num_sasb + "</span> : <span class='greenlaw'>" + data.num_green + "</span>");
+	
+	if(data['tutors_sasb'] == '') data['tutors_sasb'] = 'No SASB Tutors';
+	if(data['tutors_green'] == '') data['tutors_green'] = 'No Greenlaw Tutors';
+	
+	cell.attr('title', data['tutors_sasb'] + "\n" + data['tutors_green']);
+};
 
 var switch_tutor = function(event) {
 	var tutor_requests_div = $("#tutor_requests");
@@ -161,8 +212,11 @@ var fillTableSasb = function(data, status, jqxhr) {
 		var num = data[daytime];
 		if(num == undefined) num = 0;
 		e.append("<span class='sasb'>"+num+"</span>");
+		
+		if(data['tutors'][daytime] == undefined) data['tutors'][daytime] = 'No SASB Tutors';
+		e.attr('title', data['tutors'][daytime] + "\n");
 	});
-
+	
 	//now call the greenlaw ones (we call it here so we know it'll always come second)
 	$.ajax('getGreenlawNumbers.php',
 	       {type: 'GET',
@@ -180,18 +234,21 @@ var fillTableGreenlaw = function(data, status, jqxhr) {
 		var num = data[daytime];
 		if(num == undefined) num = 0;
 		e.append(" : <span class='greenlaw'>"+num+"</span>");
+
+		if(data['tutors'][daytime] == undefined) data['tutors'][daytime] = 'No Greenlaw Tutors';
+		e.attr('title', e.attr('title') + data['tutors'][daytime]);
 	});
 };
 
 var printHours = function(data, status, jqxhr) {
 	//clear out all the previous hours
 	$("#schedule td").each(function(i, e) {
-		$(e).removeClass('class_0');
-		$(e).removeClass('class_1');
-		$(e).removeClass('class_2');
+		e = $(e);
+		e.removeClass('class_-1');
+		e.removeClass('class_0');
+		e.removeClass('class_1');
+		e.removeClass('class_2');
 	});
-	
-	data = $.parseJSON(data);
 	
 	$.each(data, function(i, e) {
 		var cell = $("#schedule td[data-daytime='"+i+"'");

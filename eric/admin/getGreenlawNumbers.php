@@ -6,6 +6,7 @@ $con = getDatabaseConnection();
 header("Content-type: application/json");
 
 $response = array();
+$response['tutors'] = array();
 
 $result = mysqli_query($con, "SELECT * FROM `actSchedule`");
 while($row = mysqli_fetch_array($result)) {
@@ -17,10 +18,17 @@ while($row = mysqli_fetch_array($result)) {
 			$next_shift = $row['day'] . $i;
 			$next_number = $row['h'.$i];
 		}
+		if($response['tutors'][$next_shift] == undefined)
+			$response['tutors'][$next_shift] = array();
+
 		if($next_number == 2) {	//ie, if this is a greenlaw shift
 			if($response[$next_shift] == 0) {
 				$response[$next_shift] = 1;
 			}else $response[$next_shift] += 1;
+
+			$temp_result = mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$row['PID']."'");
+			$temp_row = mysqli_fetch_array($temp_result);
+			$response['tutors'][$next_shift][] = $temp_row['Fname'] . " " . $temp_row['Lname'];
 		}
 	}
 }
