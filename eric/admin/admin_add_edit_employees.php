@@ -164,29 +164,6 @@
 			mysqli_query($con, "UPDATE `actSchedule` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
 		}
 	}
-//WE GOT HERE VIA CHANGING A TUTOR'S HOURS
-	if($_POST['mon07'] != null) {
-		$tutor_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['tutor_pid']."'"));
-		
-		function getVal($val) {
-			return $_POST[$val];
-		}
-
-		$day_array = array("sun", "mon", "tue", "wed", "thu", "fri", "sat");
-	
-		for($d=0; $d<7; $d++) {
-			$day = $day_array[$d];
-			for($h=7; $h<=23; $h++) {
-				if($h<10) {
-					mysqli_query($con, "UPDATE `actSchedule` SET `h0".$h."`='".getVal($day.'0'.$h)."'"."where `PID` = '".$tutor_info[0]."' and `day`='".$day."'");
-				}else {
-					mysqli_query($con, "UPDATE `actSchedule` SET `h".$h."`='".getVal($day.$h)."'"."where `PID` = '".$tutor_info[0]."' and `day`='".$day."'");
-				}
-				
-			}
-		}
-		echo "<div id=success>Successfully Changed ".$tutor_info[1]." ".$tutor_info[2]."'s Schedule!</div>";
-	}
 
 	//the go back/logout bar
 	echo "<div><strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>" .
