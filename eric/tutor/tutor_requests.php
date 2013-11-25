@@ -51,39 +51,36 @@
 	echo "<div><strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>" .
 		"<button onclick='goBack()'>Back to Tutor Overview Page</button></div>";
 ?>
+	<form id="request_form" action="tutor_requests.php" method="post">
 	
-	<p>To use this form, simply select the desired availability in the dropdown in the upper-left corner of the table,
+	<p>To use this form, simply select the desired availability from the radio buttons below
 		and start clicking spots on the table to assign each time-block to the selected availability! To undo or deselect
 		a time-block, simply click it again until it turns white.  <strong>NOTE</strong> that you may want to leave blocks
 		for lunch/dinner as 'Prefer Not' or 'Can Work' sections</p>
-	<p>
-		<span class='busy'>'Busy'</span> indicates that you absolutely CANNOT work during the shift that starts at the
-			hour listed. Use this option for things like classes, other jobs, etc. Cells marked 'Busy' will be black. <br>
-		<span class='prefer_no'>'Prefer Not'</span> indicates that you <em>could</em> work at this time, but would
-			<em>strongly prefer</em> to not have to work if it can be avoided. These cells will be red.<br>
-		<span class='can'>'Can Work'</span> indicates that you can easily work this time and be ok, but it isn't the
-			<em>ideal</em> time for you. These cell will be highlighted yellow.<br>
-		<span class='perfect'>'Perfect'</span> indicates that this is the <em>perfect</em> time slot for you to work, and
-			you would be happy having a shift at this time. These cells will be displayed in green.
-	</p>
 	<p>
 		While the scheduling software does its best to give everybody the optimum schedule, please note that there are times
 		at which point it will be <em>impossible</em> for us to keep everybody happy. The schedule you are about to submit
 		is a <strong>request,</strong> and in no way guarantees that your assigned shifts will perfectly reflect it.
 	</p>
+	<p>
+		<span class='busy'><input name='avail' value='busy' id='busy_radio' type='radio' checked><label for='busy_radio'>'Busy'</label></span> 
+			indicates that you absolutely CANNOT work during the shift that starts at the
+			hour listed. Use this option for things like classes, other jobs, etc. Cells marked 'Busy' will be black. <br>
+		<span class='prefer_no'><input name='avail' value='prefer_no' id='prefer_no_radio' type='radio'><label for='prefer_no_radio'>'Prefer Not'</label></span> 
+			indicates that you <em>could</em> work at this time, but would
+			<em>strongly prefer</em> to not have to work if it can be avoided. These cells will be red.<br>
+		<span class='can'><input name='avail' value='can' id='can_radio' type='radio'><label for='can_radio'>'Can Work'</label></span> 
+			indicates that you can easily work this time and be ok, but it isn't the
+			<em>ideal</em> time for you. These cell will be highlighted yellow.<br>
+		<span class='perfect'><input name='avail' value='perfect' id='perfect_radio' type='radio'><label for='perfect_radio'>'Perfect'</label></span> 
+			indicates that this is the <em>perfect</em> time slot for you to work, and
+			you would be happy having a shift at this time. These cells will be displayed in green.
+	</p>
 	
-	<form id="request_form" action="tutor_requests.php" method="post">
 		<div id="request_div">
 		<table id="requests_table">
 			<thead>
-				<tr><th>
-						<select id="avail">
-							<option value="busy">Busy</option>
-							<option value="prefer_no">Prefer Not</option>
-							<option value="can">Can Work</option>
-							<option value="perfect">Perfect</option>
-						</select>
-					</th>
+				<tr><th></th>
 					<th class="na">Sunday</th>
 					<th class="na">Monday</th>
 					<th class="na">Tuesday</th>

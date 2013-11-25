@@ -6,7 +6,7 @@ $(document).ready(function () {
 	$("table#requests_table td").not(".na").each(function(i, e) {
 		td = $(e);
 		var name = td.attr("id");
-		var dropdown = $("<select>");
+		var dropdown = $("<select></select>");
 		dropdown.attr("name",name+"_val");
 		dropdown.append("<option value='0'>Busy</option>" +
 				"<option value='1'>Prefer Not</option>" +
@@ -60,7 +60,7 @@ $(document).ready(function () {
 
 var clicked = function(event) {
 	var cell = $(this);
-	var availability = $('select#avail').val();
+	var availability = $("input[name='avail']:checked").val();
 	var avail_num = null;
 	
 	//Change the class(and hence the color) of the cell based on the availability the user has selected. We'll also
