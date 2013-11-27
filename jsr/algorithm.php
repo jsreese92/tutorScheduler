@@ -342,19 +342,22 @@ function ensureGradGe14(&$theSchedule){
   global $pidArray;
   global $preferences;
   global $tutorInfo;
+  global $hoursWorking;
   foreach($pidArray as $thePid){
     // intially skip over if tutor does not need to be scheduled
     if(($tutorInfo[$thePid]["type"] == "grad") and (intval($hoursWorking[$thePid]) < 14)){
       foreach($days as $theDay){
         foreach($hours as $theHour){
-          if(($openHours[$theDay][$theHour] == 1) and (intval($hoursWorking[$thePid]) < 14)){
+          if(($openHours[$theDay][$theHour] == 1) and ($hoursWorking[$thePid] < 14)){
             $temp = new tuple;
             $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
             if($temp != NULL){
-
+              $thePref = $temp->getPref();
+              $theType = $temp->getTheType();
+              addTuple($theSchedule,$theDay,$theHour,$thePid,$thePref,$theType);
+              removeTuple($preferences,$theDay,$theHour,$thePid);
+              $hoursWorking[$thePid] = $hoursWorking[$thePid] + 1;
             }
-
-
           }
         }
       }
@@ -368,8 +371,23 @@ loadPref();
 ensureTwoScheduled($sasbSchedule);
 
 // 2. Grad students must work at least 14 hours (at most handled later)
-//ensureGradGe14();
+ensureGradGe14($sasbSchedule);
 
+echo"sasbSchedule\n";
+echo"<pre>";
+//var_dump($sasbSchedule);
+echo"</pre>";
+
+// prints everybody's PID, name, and current hours scheduled
+echo"<pre>";
+echo"test\n";
+foreach($pidArray as $thePid){
+  $fname = $tutorInfo[$thePid]["Fname"];
+  $lname = $tutorInfo[$thePid]["Lname"];
+  $type = $tutorInfo[$thePid]["type"];
+  echo"$thePid, $fname, $lname, $type, $hoursWorking[$thePid]\n";
+}
+echo"<pre>";
 
 /*
 // populate sasb with grad students with 3 preference
@@ -429,8 +447,5 @@ foreach($days as $theDay){
   }
 }
  */
-echo"sasbSchedule\n";
-echo"<pre>";
-var_dump($sasbSchedule);
-echo"</pre>";
+
 ?>
