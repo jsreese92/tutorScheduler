@@ -16,6 +16,7 @@ $preferences = initializeTupleArray();
 $days = array(sun,mon,tue,wed,thu,fri,sat);
 $hours = array(h00,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23);
 $hoursWorking = initializeHoursWorking();
+$hoursWorkingPerDay = initializeHoursWorkingPerDay();
 $openHours = getOpenHours();
 
 // returns assoc array with PID as the key and array containing Fname, Lname, and type as value
@@ -49,6 +50,21 @@ function initializeHoursWorking(){
   $arr = array();
   foreach($pidArray as $thePid){
     $arr[$thePid] = 0; // initialized to 0
+  }
+  return $arr;
+}
+
+// array where key is PID and value is assoc array of days whose values are
+// number of hours working that day
+function initializeHoursWorkingPerDay(){
+  global $pidArray;
+  global $days;
+  $arr = array();
+  foreach($pidArray as $thePid){
+    $arr[$thePid]=array();
+    foreach($days as $theDay){
+      $arr[$thePid][$theDay]=0;
+    }
   }
   return $arr;
 }
@@ -202,7 +218,7 @@ class tuple {
 $sql =("select hoursByDay.*, employeeInfo.type from hoursByDay, employeeInfo where hoursByDay.PID = employeeInfo.PID");
 $result = mysqli_query($con,$sql);
 $numRows = mysqli_num_rows($result);
-*/
+ */
 
 // populate array of tuples via a wildly ineffecient querying scheme
 function loadPref(){ // returns preferences tuple array
@@ -307,6 +323,7 @@ function scheduleAllHours(&$theSchedule,$numToSchedule,$theType,$maxPref,$minPre
   global $preferences;
   global $tutorInfo;
   global $hoursWorking;
+  global $hoursWorkingPerDay;
   for($currentPref = $maxPref; $currentPref >= $minPref; $currentPref--){
     foreach($days as $theDay){
       foreach($hours as $theHour){
@@ -324,6 +341,7 @@ function scheduleAllHours(&$theSchedule,$numToSchedule,$theType,$maxPref,$minPre
                     addTuple($theSchedule,$theDay,$theHour,$thePid,$thePref,$theType);
                     removeTuple($preferences,$theDay,$theHour,$thePid);
                     $hoursWorking[$thePid] = $hoursWorking[$thePid] + 1;
+                    $hoursWorkingPerDay[$thePid][$theDay] = $hoursWorkingPerDay[$thePid][$theDay] + 1 ;
                   }
                 }
               }
@@ -343,11 +361,13 @@ function ensureGradGe14(&$theSchedule){
   global $preferences;
   global $tutorInfo;
   global $hoursWorking;
+  global $hoursWorkingPerDay;
   foreach($pidArray as $thePid){
     // intially skip over if tutor does not need to be scheduled
     if(($tutorInfo[$thePid]["type"] == "grad") and (intval($hoursWorking[$thePid]) < 14)){
       foreach($days as $theDay){
         foreach($hours as $theHour){
+          // as long as this day is open and the grad is not at his max
           if(($openHours[$theDay][$theHour] == 1) and ($hoursWorking[$thePid] < 14)){
             $temp = new tuple;
             $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
@@ -357,12 +377,95 @@ function ensureGradGe14(&$theSchedule){
               addTuple($theSchedule,$theDay,$theHour,$thePid,$thePref,$theType);
               removeTuple($preferences,$theDay,$theHour,$thePid);
               $hoursWorking[$thePid] = $hoursWorking[$thePid] + 1;
+              $hoursWorkingPerDay[$thePid][$theDay] = $hoursWorkingPerDay[$thePid][$theDay] + 1 ;
             }
           }
         }
       }
     }
   }
+}
+
+function ensureUgradLe10(&$theSchedule){
+  global $days;
+  global $hours;
+  global $openHours;
+  global $pidArray;
+  global $preferences;
+  global $tutorInfo;
+  global $hoursWorking;
+  global $hoursWorkingPerDay;
+  foreach($pidArray as $thePid){
+    // intially skip over if tutor does not need to be scheduled
+    if(($tutorInfo[$thePid]["type"] == "ugrad") and (intval($hoursWorking[$thePid]) < 10)){
+      foreach($days as $theDay){
+        foreach($hours as $theHour){
+          // as long as this day is open and the ugrad is between 6 and 10 hrs
+          if(($openHours[$theDay][$theHour] == 1) and ($hoursWorking[$thePid] < 10)){
+            $temp = new tuple;
+            $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
+            if($temp != NULL){
+              $thePref = $temp->getPref();
+              $theType = $temp->getTheType();
+              addTuple($theSchedule,$theDay,$theHour,$thePid,$thePref,$theType);
+              removeTuple($preferences,$theDay,$theHour,$thePid);
+              $hoursWorking[$thePid] = $hoursWorking[$thePid] + 1;
+              $hoursWorkingPerDay[$thePid][$theDay] = $hoursWorkingPerDay[$thePid][$theDay] + 1 ;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Removes tuples from given schedule if a tutor is working more than five 
+// hours in a shift. Places tuple back in preferences array since that tutor 
+// is now available to work. Removes in order of preference.
+function ensureLeFiveHoursPerDay(&$theSchedule){
+  global $days;
+  global $hours;
+  global $openHours;
+  global $pidArray;
+  global $preferences;
+  global $tutorInfo;
+  global $hoursWorking;
+  global $hoursWorkingPerDay;
+  foreach($pidArray as $thePid){
+    foreach($days as $theDay){
+      while($hoursWorkingPerDay[$thePid][$theDay] > 5){
+        $low= findLowestTuple($theSchedule,$theDay,$thePid);
+        // add back to preferences since tutor can now work this hour
+        addTuple($preferences,$theDay,$low["hour"],$thePid,$low["pref"],$low["type"]);
+        removeTuple($theSchedule,$theDay,$low["hour"],$thePid);
+        $hoursWorking[$thePid]= $hoursWorking[$thePid] - 1;
+        $hoursWorkingPerDay[$thePid][$theDay] = $hoursWorkingPerDay[$thePid][$theDay] - 1 ;
+      }
+    }
+  }
+}
+
+// given a schedule, day, and PID returns hour and pref of that person's least
+// preferred tuple. (Can easily be modified to return something other than
+// just the hour).
+function findLowestTuple($theSchedule, $theDay, $thePid){
+  global $hours;
+  $lowest = 4;
+  $low = array();
+  //$temp = $preferences[$theDay][$theHour]["tuples"][$thePid]
+  foreach($hours as $theHour){
+    $currentTuple = $theSchedule[$theDay][$theHour]["tuples"][$thePid];
+    if($currentTuple != NULL){
+      $currentPref = $currentTuple->getPref();
+      if($currentPref < $lowest){
+        $lowest = $currentPref;
+        $low["pref"]=$currentPref;
+        $low["hour"]=$theHour;
+        $low["type"]=$currentTuple->getTheType();
+      }
+    }
+  }
+  return $low;
 }
 
 // 1. SASB covered for all open hours
@@ -373,10 +476,24 @@ ensureTwoScheduled($sasbSchedule);
 // 2. Grad students must work at least 14 hours (at most handled later)
 ensureGradGe14($sasbSchedule);
 
-echo"sasbSchedule\n";
+// 3. Ugrads work at most 10 hours, between 6 and 10
+ensureUgradLe10($sasbSchedule);
+
+// 4. No more than 5 hours in a day
+ensureLeFiveHoursPerDay($sasbScedule);
+/*
+$arr = findLowestTuple($sasbSchedule,"mon","720360006");
 echo"<pre>";
-//var_dump($sasbSchedule);
+var_dump($arr);
 echo"</pre>";
+ */
+
+/*
+echo"hoursPerDay\n";
+echo"<pre>";
+var_dump($hoursWorkingPerDay);
+echo"</pre>";
+ */
 
 // prints everybody's PID, name, and current hours scheduled
 echo"<pre>";
@@ -388,64 +505,4 @@ foreach($pidArray as $thePid){
   echo"$thePid, $fname, $lname, $type, $hoursWorking[$thePid]\n";
 }
 echo"<pre>";
-
-/*
-// populate sasb with grad students with 3 preference
-foreach($days as $theDay){
-  foreach($hours as $theHour){
-    if($openHours[$theDay][$theHour] == 1){
-      foreach($pidArray as $thePid){
-        $temp = new tuple;
-        $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
-        if($temp != NULL){
-          $thePref = $temp->getPref();
-          $theType = $temp->getTheType();
-          if($thePref == 3){
-            addTuple($sasbSchedule, $theDay, $theHour, $thePid, $thePref, $theType);
-          }
-        }
-      }
-    }
-  }
-}
-
-// check which hours have less than two, and add 2s as necessary
-foreach($days as $theDay){
-  foreach($hours as $theHour){
-    if(($openHours[$theDay][$theHour] == 1) and (numTuples($sasbSchedule, $theDay, $theHour) < 2)){
-      foreach($pidArray as $thePid){
-        $temp = new tuple;
-        $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
-        if($temp != NULL){
-          $thePref = $temp->getPref();
-          $theType = $temp->getTheType();
-          if($thePref == 2){
-            addTuple($sasbSchedule, $theDay, $theHour, $thePid, $thePref, $theType);
-          }
-        }
-      }
-    }
-  }
-}
-
-// same thing with 1s
-foreach($days as $theDay){
-  foreach($hours as $theHour){
-    if(($openHours[$theDay][$theHour] == 1) and (numTuples($sasbSchedule, $theDay, $theHour) < 2)){
-      foreach($pidArray as $thePid){
-        $temp = new tuple;
-        $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
-        if($temp != NULL){
-          $thePref = $temp->getPref();
-          $theType = $temp->getTheType();
-          if($thePref == 1){
-            addTuple($sasbSchedule, $theDay, $theHour, $thePid, $thePref, $theType);
-          }
-        }
-      }
-    }
-  }
-}
- */
-
 ?>
