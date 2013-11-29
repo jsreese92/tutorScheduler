@@ -481,6 +481,20 @@ ensureUgradLe10($sasbSchedule);
 
 // 4. No more than 5 hours in a day
 ensureLeFiveHoursPerDay($sasbScedule);
+
+// 5. No more than 4 in a row
+// TODO doesn't this seem redundant? Why not just leave it at no more than
+// 5 per day?
+
+// 6. Grads get no more than 2 off in a row
+
+// 7. Move people to GL
+// TODO make array of min and max allowed tutors for each hour
+
+// 8. Double check and make sure grads have 14 hours
+
+// 9. Staff meetings
+
 /*
 $arr = findLowestTuple($sasbSchedule,"mon","720360006");
 echo"<pre>";
