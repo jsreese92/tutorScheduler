@@ -78,7 +78,7 @@ else{
 }
 
 // Populate hoursByDay with initial data
-$sql="load data local infile './testAvail.txt' into table hoursByDay
+$sql="load data local infile './TutorPreferences.txt' into table hoursByDay
   fields terminated by ','";
 
 if (mysqli_query($con,$sql)){
