@@ -1,6 +1,6 @@
 <?php
 // Create connection on Openshift machine
-$con=mysqli_connect("127.10.98.130","adminR4Im6WI","V16hdDRZ_SGr");
+$con=mysqli_connect("localhost","jonesep","");
 
 // Check connection
 if (mysqli_connect_errno($con)){
@@ -45,7 +45,7 @@ else{
 }
 
 // Populate employeeInfo with initial data
-$sql="load data local infile './TutorPreferences.txt' into table employeeInfo 
+$sql="load data local infile './testEmployee.txt' into table employeeInfo 
   fields terminated by ','";
 
 if (mysqli_query($con,$sql)){
