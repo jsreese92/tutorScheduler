@@ -220,7 +220,8 @@ var fillTableSasb = function(data, status, jqxhr) {
 		e.append("<span class='sasb'>"+num+"</span>");
 		
 		if(data['tutors'][daytime] == undefined) data['tutors'][daytime] = 'No SASB Tutors';
-		e.attr('title', data['tutors'][daytime] + "\n");
+		e.attr('title', 'SASB:');
+		e.attr('title', e.attr('title') + data['tutors'][daytime] + "\n");
 	});
 	
 	//now call the greenlaw ones (we call it here so we know it'll always come second)
@@ -242,7 +243,7 @@ var fillTableGreenlaw = function(data, status, jqxhr) {
 		e.append(" : <span class='greenlaw'>"+num+"</span>");
 
 		if(data['tutors'][daytime] == undefined) data['tutors'][daytime] = 'No Greenlaw Tutors';
-		e.attr('title', e.attr('title') + data['tutors'][daytime]);
+		e.attr('title', e.attr('title') + 'GREENLAW:' + data['tutors'][daytime]);
 	});
 };
 
