@@ -16,6 +16,7 @@ header("Content-type: application/json");
 if($_POST['pid'] == null) {
 //if the request didn't come by post, they want us to return the users schedule rather than update it
 	$response = array();
+	$response['pid'] = $_GET['tutor'];
 	
 	$result = mysqli_query($con, "SELECT * FROM `actSchedule` WHERE `PID` = '".mysqli_real_escape_string($con, $_GET['tutor'])."'");
 	if(mysqli_num_rows($result) == 0) {

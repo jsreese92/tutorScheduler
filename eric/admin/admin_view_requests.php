@@ -33,9 +33,11 @@
 	}
 ?>	
 	</div>
-	
-	<div id = 'tutor_requests'></div>
-	<div id = 'tutor_schedule'></div>
+	<div id= 'tutor_container'>
+		<div id = 'tutor_requests'></div>
+		<div id = 'tutor_schedule'></div>
+		<div id = 'tutor_comments'></div>
+	</div>
 <?php	
 	//echo all the tables full of each tutor's requests
 	$result = mysqli_query($con, "SELECT `PID` FROM `employeeInfo` WHERE `type` != 'admin'");

@@ -9,7 +9,7 @@
 	}
 	session_start();
 	
-	if(!isset($_COOKIE['TutorSchedulerAuth']) || $_COOKIE['TutorSchedulerAuth'] != md5($_SESSION['pid'] . $_SERVER['REMOTE_ADDR'] . $_SESSION['authsalt'])) {
+	if(!isset($_COOKIE['TutorSchedulerAuth']) || $_COOKIE['TutorSchedulerAuth'] != md5($_SESSION['pid'] . $_SESSION['remote_address'] . $_SERVER['REMOTE_ADDR'] . $_SESSION['authsalt'])) {
 		//meaning the authorization cookie either isn't there, the session cookie isn't there, or the cookie doesn't match what we expect
 		echo "<script type = 'text/javascript'>location.href='$validation_url'</script>";
 		exit();

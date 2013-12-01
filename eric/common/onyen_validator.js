@@ -17,7 +17,7 @@ $(document).ready(function() {
 		break;
 	case 'illegal attempt':
 		alert('There was an error; the connection may have timed out. Please login again.');
-		form.attr('action', actual_url.replace('onyen_validator.php', 'login.php'));
+		form.attr('action', actual_url.replace('/common/onyen_validator.php', ''));
 		break;
 	}
 	

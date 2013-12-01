@@ -192,7 +192,6 @@ var switch_tutor = function(event) {
 				
 				alert(error);}
 			});
-	
 };
 
 var num_to_class = function(num) {
@@ -263,6 +262,23 @@ var printHours = function(data, status, jqxhr) {
 			cell.addClass(e);
 		}
 	});
+	
+	//and insert their comments
+	var sent_data = {};
+	sent_data.tutor = data['pid'];
+	$.ajax('tutorComments.php',
+			{type: 'GET',
+			 data: sent_data,
+			 cache: false,
+			 success: function(data) {
+				var comment_div = $("#tutor_comments");
+				comment_div.empty();
+				comment_div.append("<strong>Comments: </strong>");
+				comment_div.append(data);
+			 },
+			 error: function(jqxhr, status, error) {alert(error);}
+			});
+
 };
 
 var goBack = function() {
