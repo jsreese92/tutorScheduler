@@ -24,6 +24,7 @@
 
 //IF WE GOT TO THE PAGE VIA THE ADD BUTTON, UPDATE THE DATABASE!
 	if($_POST['new_pid'] != null) {
+		$success = true;
 		$unique = true;
 		
 		$new_Fname = mysqli_real_escape_string($con, $_POST['new_Fname']);
@@ -57,56 +58,76 @@
 		if(!$unique) {
 			echo "<div id=failure>Failed to add ".$new_Fname." ".$new_Lname." to database; duplicate employee!</div>";
 		}else {
-			echo "<div id=success>Successfully added ".$new_Fname." ".$new_Lname." to database!</div>";
 			//add them to employeeInfo
 			mysqli_query($con, "INSERT INTO `employeeInfo` (`PID`, `Fname`, `Lname`, `type`) VALUES ('".$new_pid."','".$new_Fname."','".$new_Lname."','".$new_type."');");
 			//add them to hoursByDay if not an admin
 			if($new_type != 'admin') {
 				mysqli_query($con, "INSERT INTO `hoursByDay` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
-					VALUES ('".$new_pid."','sun','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+					VALUES ('".$new_pid."','sun','-1','-1','-1','-1','-1','-1','-1','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `hoursByDay` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
-					VALUES ('".$new_pid."','mon','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+					VALUES ('".$new_pid."','mon','-1','-1','-1','-1','-1','-1','-1','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `hoursByDay` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
-					VALUES ('".$new_pid."','tue','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+					VALUES ('".$new_pid."','tue','-1','-1','-1','-1','-1','-1','-1','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `hoursByDay` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
-					VALUES ('".$new_pid."','wed','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+					VALUES ('".$new_pid."','wed','-1','-1','-1','-1','-1','-1','-1','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `hoursByDay` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
-					VALUES ('".$new_pid."','thu','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+					VALUES ('".$new_pid."','thu','-1','-1','-1','-1','-1','-1','-1','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `hoursByDay` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
-					VALUES ('".$new_pid."','fri','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+					VALUES ('".$new_pid."','fri','-1','-1','-1','-1','-1','-1','-1','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `hoursByDay` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
-					VALUES ('".$new_pid."','sat','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
-
+					VALUES ('".$new_pid."','sat','-1','-1','-1','-1','-1','-1','-1','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3','3');");
+				if(mysqli_error($con)) $success = false;
+				
 				//add em into actSchedule
 				mysqli_query($con, "INSERT INTO `actSchedule` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
 					VALUES ('".$new_pid."','sun','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `actSchedule` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
 					VALUES ('".$new_pid."','mon','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `actSchedule` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
 					VALUES ('".$new_pid."','tue','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `actSchedule` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
 					VALUES ('".$new_pid."','wed','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `actSchedule` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
 					VALUES ('".$new_pid."','thu','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `actSchedule` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
 					VALUES ('".$new_pid."','fri','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
+				if(mysqli_error($con)) $success = false;
 				mysqli_query($con, "INSERT INTO `actSchedule` (`PID`, `day`, `h00`, `h01`, `h02`, `h03`, `h04`, `h05`, `h06`, `h07`, `h08`, `h09`, `h10`, `h11`, `h12`, 
 					`h13`, `h14`, `h15`, `h16`, `h17`, `h18`, `h19`, `h20`, `h21`, `h22`, `h23`) 
 					VALUES ('".$new_pid."','sat','-1','-1','-1','-1','-1','-1','-1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');");
-
+				if(mysqli_error($con)) $success = false;
+				
+				//add em into tutorComments
+				mysqli_query($con, "INSERT INTO `tutorComments` (`PID`, `comments`) VALUES ('".$new_pid."', 'none.')");
+				if(mysqli_error($con)) $success = false;
+				
+				if($success) {
+					echo "<div id=success>Successfully added ".$new_Fname." ".$new_Lname." to database!</div>";
+				}else echo "<div id=failure>Failed to add ".$new_Fname." ".$new_Lname." to database! A query error occured.</div>";
 			}
 
 			//reset all the values so the fields are blank again
@@ -120,21 +141,35 @@
 	}
 //IF WE GOT HERE VIA THE REMOVE BUTTON, REMOVE THE EMPLOYEE!
 	if($_POST['delete_pid'] != null) {
+		$success = true;
+		
 		$delete_pid = mysqli_real_escape_string($con, $_POST['delete_pid']);
 		$temp = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$delete_pid."'"));
-		echo "<div id='success'>Successfully removed ".$temp[1]." ".$temp[2]." from the database!</div>";
+		if(mysqli_error($con)) $success = false;
 		
 		//remove from employeeInfo
 		mysqli_query($con, "DELETE FROM `employeeInfo` WHERE `PID` = '".$delete_pid."'");
+		if(mysqli_error($con)) $success = false;
 		//remove from hoursByDay
 		mysqli_query($con, "DELETE FROM `hoursByDay` WHERE `PID` = '".$delete_pid."'");
+		if(mysqli_error($con)) $success = false;
 		//remove from actSchedule
 		mysqli_query($con, "DELETE FROM `actSchedule` WHERE `PID` = '".$delete_pid."'");
+		if(mysqli_error($con)) $success = false;
+		//remove from tutorComments
+		mysqli_query($con, "DELETE FROM `tutorComments` WHERE `PID` = '".$delete_pid."'");
+		if(mysqli_error($con)) $success = false;
+		
+		if($success) {
+			echo "<div id='success'>Successfully removed ".$temp[1]." ".$temp[2]." from the database!</div>";
+		}else echo "<div id='failure'>Failed to successfully remove ".$temp[1]." ".$temp[2]." from all tables! An error occured.</div>";
 	}
 
 	
 //IF WE GOT HERE VIA SUBMITTING AN EDIT
 	if($_POST['edit_pid'] != null) {
+		$success = true;
+		
 		$edit_pid = mysqli_real_escape_string($con, $_POST['edit_pid']);
 		$old_pid = mysqli_real_escape_string($con, $_POST['old_pid']);
 		$edit_Lname = mysqli_real_escape_string($con, $_POST['edit_Lname']);
@@ -155,20 +190,31 @@
 		if(!$unique) {
 			echo "<div id=failure>Failed to edit ".$edit_Fname." ".$edit_Lname." in database; would create duplicate employee!</div>";
 		}else {
-			echo "<div id=success>Successfully edited ".$edit_Fname." ".$edit_Lname." in database!</div>";
-
 			//update employeeInfo
 			mysqli_query($con, "UPDATE `employeeInfo` SET `Fname` = '".$edit_Fname."' WHERE `PID` = '".$old_pid."'");
+			if(mysqli_error($con)) $success = false;
 			mysqli_query($con, "UPDATE `employeeInfo` SET `Lname` = '".$edit_Lname."' WHERE `PID` = '".$old_pid."'");
+			if(mysqli_error($con)) $success = false;
 			if($_POST['edit_type'] != null) {
 				$edit_type = mysqli_real_escape_string($con, $_POST['edit_type']);
 				mysqli_query($con, "UPDATE `employeeInfo` SET `type` = '".$edit_type."' WHERE `PID` = '".$old_pid."'");
+				if(mysqli_error($con)) $success = false;
 			}
 			mysqli_query($con, "UPDATE `employeeInfo` SET `PID` = '".$edit_pid."' WHERE `PID` = '".$old_pid."'");
+			if(mysqli_error($con)) $success = false;
 			//update hoursByDay
 			mysqli_query($con, "UPDATE `hoursByDay` SET `PID` = '".$edit_pid."' WHERE `PID` = '".$old_pid."'");
+			if(mysqli_error($con)) $success = false;
 			//update actSchedule
 			mysqli_query($con, "UPDATE `actSchedule` SET `PID` = '".$edit_pid."' WHERE `PID` = '".$old_pid."'");
+			if(mysqli_error($con)) $success = false;
+			//update tutorComments
+			mysqli_query($con, "UPDATE `tutorComments` SET `PID` = '".$edit_pid."' WHERE `PID` = '".$old_pid."'");
+			if(mysqli_error($con)) $success = false;
+			
+			if($success) {
+				echo "<div id=success>Successfully edited ".$edit_Fname." ".$edit_Lname." in database!</div>";
+			}else echo "<div id=failure>Failed to edit ".$edit_Fname." ".$edit_Lname." in all tables! There was an error.</div>";
 		}
 	}
 

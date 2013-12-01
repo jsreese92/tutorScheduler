@@ -26,25 +26,35 @@
 
 //IF WE GOT TO THE PAGE VIA THE SUBMIT BUTTON, UPDATE THE DATABASE!
 	if($_POST['submit_checkbox']==true) {
+		$success = true;
 		
 		function getVal($val) {
 			return $_POST[$val];
 		}
-
+		
 		$day_array = array("sun", "mon", "tue", "wed", "thu", "fri", "sat");
-	
+		
 		for($d=0; $d<7; $d++) {
 			$day = $day_array[$d];
 			for($h=7; $h<=23; $h++) {
 				if($h<10) {
 					mysqli_query($con, "UPDATE `hoursByDay` SET `h0".$h."`='".getVal($day.'0'.$h.'_val')."'"."where `PID` = '".$employee_info[0]."' and `day`='".$day."'");
+					if(mysqli_error($con)) $success = false;
 				}else {
 					mysqli_query($con, "UPDATE `hoursByDay` SET `h".$h."`='".getVal($day.$h.'_val')."'"."where `PID` = '".$employee_info[0]."' and `day`='".$day."'");
+					if(mysqli_error($con)) $success = false;
 				}
-				
 			}
 		}
-		echo "<div id=success>Successfully Submitted Requests!</div>";
+		if(trim($_POST['comments']) == '') {
+			$comments = 'none.';
+		}else $comments = mysqli_real_escape_string($con, trim($_POST['comments']));
+		
+		mysqli_query($con, "UPDATE `tutorComments` SET `comments`='".$comments."' WHERE `PID` = '".$employee_info[0]."'");
+		if(mysqli_error($con)) $success = false;
+		if($success) {
+			echo "<div id=success>Successfully Submitted Requests!</div>";
+		}else echo "<div id=failure>Failed to Submit Requests: The Database could not be written to!</div>";
 	}
 
 	//the go back/logout bar
@@ -281,6 +291,12 @@
 		</table>
 		</div>
 
+		<br>
+		Type any comments you want the admins to see below:<br>
+		<?php 
+			$comments_value = mysqli_fetch_array(mysqli_query($con, "SELECT `comments` FROM `tutorComments` WHERE `PID` = '".$employee_info[0]."'"));
+		?>
+		<textarea name='comments' rows='5' cols='100' maxlength='2000'><?php echo $comments_value[0]; ?></textarea>
 		<br>
 		<button id="submit" type="submit" onclick="submit_requests()">Submit</button>
 		<button id="clear" type="button" onclick="clear_requests()">Clear All</button>

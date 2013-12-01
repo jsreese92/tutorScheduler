@@ -26,6 +26,7 @@
 
 //IF WE GOT TO THE PAGE VIA THE SUBMIT BUTTON, UPDATE THE DATABASE!
 	if($_POST['submit_checkbox']==true) {
+		$success = true;
 
 		function getClass($val) {
 			if($_POST[$val]) {
@@ -42,12 +43,16 @@
 			for($i=7; $i<=23; $i++) {
 				if($i < 10) {
 					mysqli_query($con, "UPDATE `openHours` SET `h0".$i."` = ".getClass($day.'0'.$i.'_val')." WHERE `day`='".mysqli_real_escape_string($con, $day)."'");
+					if(mysqli_error($con)) $success = false;
 				}else {
-					 mysqli_query($con, "UPDATE `openHours` SET `h".$i."` = ".getClass($day.$i.'_val')." WHERE `day`='".mysqli_real_escape_string($con, $day)."'");
+					mysqli_query($con, "UPDATE `openHours` SET `h".$i."` = ".getClass($day.$i.'_val')." WHERE `day`='".mysqli_real_escape_string($con, $day)."'");
+					if(mysqli_error($con)) $success = false;
 				}
 			}
 		}
-		echo "<div id=success>Successfully Submitted Hours!</div>";
+		if($success) {
+			echo "<div id=success>Successfully Submitted Hours!</div>";
+		}else echo "<div id=failure>Failed to Submit Hours! There was a query error.</div>";
 	}
 
 	//the go back/logout bar

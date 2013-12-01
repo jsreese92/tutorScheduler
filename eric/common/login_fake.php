@@ -10,10 +10,11 @@
 			
 			//generate an authorization cookie and setup the session data
 			$_SESSION['pid'] = $_POST['pid'];
-			$_SESSION['authsalt'] = time() . substr(md5(rand()), 0, 16);
+			$_SESSION['authsalt'] = substr(md5(rand()), 0, 32);
+			$_SESSION['remote_address'] = $_SERVER['REMOTE_ADDR'];
 			
 			$expire = time() + 450;
-			$cookie_data = md5($_SESSION['pid'] . $_SERVER['REMOTE_ADDR'] . $_SESSION['authsalt']);
+			$cookie_data = md5($_SESSION['pid'] . $_SESSION['remote_address'] . $_SERVER['REMOTE_ADDR'] . $_SESSION['authsalt']);
 			
 			setcookie('TutorSchedulerAuth', $cookie_data, $expire, '/');
 			

@@ -94,9 +94,16 @@ table tbody td.na {
 	background-color: #97D984;
 }
 
-#tutor_select, #tutor_requests, #tutor_schedule {
+#tutor_select, #tutor_container, #tutor_requests, #tutor_schedule {
 	float: left;
 	border: thin solid black;
+}
+#tutor_select {
+	width: 150px;
+}
+#tutor_comments {
+	padding: 5px;
+	width: 1120px;
 }
 
 span.nav:hover {
