@@ -152,6 +152,36 @@ else{
   echo "Error loading data: " . mysqli_error($con) . "<br>";
 }
 
+// Drop tutorComments if previously there
+$sql="drop table if exists tutorComments";
+if(mysqli_query($con,$sql)){
+  echo "Deleted previously existing tutorComments table <br>";
+}
+
+// Create tutorComments
+$sql="create table tutorComments (
+  PID INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (PID),
+  comments TEXT(2000))";
+  
+if (mysqli_query($con,$sql)){
+  echo "Table tutorComments created successfully.<br>";
+}
+else{
+  echo "Error creating table: " . mysqli_error($con) . "<br>";
+}
+
+// Populate tutorComments with initial data
+$sql="load data local infile './testComments.txt' into table tutorComments 
+  fields terminated by ','";
+
+if (mysqli_query($con,$sql)){
+  echo "tutorComments loaded successfully.<br>";
+}
+else{
+  echo "Error loading data: " . mysqli_error($con) . "<br>";
+}
+
 
 /* old way of doing variables
 $sql="create table sampleData (
