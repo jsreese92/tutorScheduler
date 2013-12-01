@@ -18,16 +18,16 @@
 			
 			setcookie('TutorSchedulerAuth', $cookie_data, $expire, '/');
 			
-			$result = mysqli_fetch_array(mysqli_query($con, "SELECT `type` FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
-			
-			switch($result[0]) {
+			$result = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
+						
+			switch(trim($result['type'])) {
 				case 'admin':
 					echo "<script>location.href='$admin_url'</script>";
-					break;
-				case 'ugrad':
+					exit();
 				case 'grad':
+				case 'ugrad':
 					echo "<script>location.href='$tutor_url'</script>";
-					break;
+					exit();
 			}
 	}
 ?>

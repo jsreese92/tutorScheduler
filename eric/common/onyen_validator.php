@@ -50,7 +50,7 @@
 			
 			setcookie('TutorSchedulerAuth', $cookie_data, $expire, '/');
 			
-			echo "<span id = 'form_target' hidden>".$employee_info[3]."</span>\n";
+			echo "<span id = 'form_target' hidden>".trim($employee_info[3])."</span>\n";
 			
 		}else {
 			//meaning they aren't listed in the info database, and we'll redirect them back to login
