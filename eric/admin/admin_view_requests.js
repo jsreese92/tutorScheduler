@@ -92,8 +92,8 @@ var change_schedule = function() {
 			 cache: false,
 			 data: data_sent,
 			 success: updateScheduleSuccess,
-			 error: function () {
-				alert('failure');}
+			 error: function (jqxhr, status, error) {
+				alert(error);}
 			});
 };
 var updateScheduleSuccess = function(data, status, jqxhr) {
@@ -176,14 +176,21 @@ var switch_tutor = function(event) {
 	//now we'll fill out the current schedule table with their hours
 	var sent_data = {};
 	sent_data.tutor = new_pid;
-	
 	$.ajax('tutorHours.php',
 	       {type: 'GET',
 		    data: sent_data,
 		    cache: false,
 			success: printHours,
-			error: function () {
-				alert('failure');}
+			error: function (jqxhr, status, error) {
+				$("#schedule td").each(function(i, e) {
+					e = $(e);
+					e.removeClass('class_-1');
+					e.removeClass('class_0');
+					e.removeClass('class_1');
+					e.removeClass('class_2');
+				});
+				
+				alert(error);}
 			});
 	
 };

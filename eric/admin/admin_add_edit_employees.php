@@ -2,7 +2,7 @@
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 	
-	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_SESSION['pid']."'"));
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
 
 	if($employee_info[3] != 'admin') {
 		echo "<script type = 'text/javascript'>location.href='http://$_SERVER[HTTP_HOST]/common/onyen_validator.php'</script>";
@@ -26,10 +26,10 @@
 	if($_POST['new_pid'] != null) {
 		$unique = true;
 		
-		$new_Fname = $_POST['new_Fname'];
-		$new_Lname = $_POST['new_Lname'];
-		$new_pid = $_POST['new_pid'];
-		$new_type = $_POST['new_type'];
+		$new_Fname = mysqli_real_escape_string($con, $_POST['new_Fname']);
+		$new_Lname = mysqli_real_escape_string($con, $_POST['new_Lname']);
+		$new_pid = mysqli_real_escape_string($con, $_POST['new_pid']);
+		$new_type = mysqli_real_escape_string($con, $_POST['new_type']);
 				
 		//figure out which type they selected so we can set it as the default if the page comes back failed
 		switch($new_type) {
@@ -120,48 +120,55 @@
 	}
 //IF WE GOT HERE VIA THE REMOVE BUTTON, REMOVE THE EMPLOYEE!
 	if($_POST['delete_pid'] != null) {
-		$temp = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['delete_pid']."'"));
+		$delete_pid = mysqli_real_escape_string($con, $_POST['delete_pid']);
+		$temp = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$delete_pid."'"));
 		echo "<div id='success'>Successfully removed ".$temp[1]." ".$temp[2]." from the database!</div>";
 		
 		//remove from employeeInfo
-		mysqli_query($con, "DELETE FROM `employeeInfo` WHERE `PID` = '".$_POST['delete_pid']."'");
+		mysqli_query($con, "DELETE FROM `employeeInfo` WHERE `PID` = '".$delete_pid."'");
 		//remove from hoursByDay
-		mysqli_query($con, "DELETE FROM `hoursByDay` WHERE `PID` = '".$_POST['delete_pid']."'");
+		mysqli_query($con, "DELETE FROM `hoursByDay` WHERE `PID` = '".$delete_pid."'");
 		//remove from actSchedule
-		mysqli_query($con, "DELETE FROM `actSchedule` WHERE `PID` = '".$_POST['delete_pid']."'");
+		mysqli_query($con, "DELETE FROM `actSchedule` WHERE `PID` = '".$delete_pid."'");
 	}
 
 	
 //IF WE GOT HERE VIA SUBMITTING AN EDIT
 	if($_POST['edit_pid'] != null) {
+		$edit_pid = mysqli_real_escape_string($con, $_POST['edit_pid']);
+		$old_pid = mysqli_real_escape_string($con, $_POST['old_pid']);
+		$edit_Lname = mysqli_real_escape_string($con, $_POST['edit_Lname']);
+		$edit_Fname = mysqli_real_escape_string($con, $_POST['edit_Fname']);
 		$unique = true;
 
 		//check if the given employee is already in the table
-		$temp = mysqli_fetch_array(mysqli_query($con, "SELECT `PID` FROM `employeeInfo` WHERE `PID` = '".$_POST['edit_pid']."' AND `PID` != '".$_POST['old_pid']."'"));
+		$temp = mysqli_fetch_array(mysqli_query($con, "SELECT `PID` FROM `employeeInfo` WHERE `PID` = '".$edit_pid."' AND `PID` != '".$old_pid."'"));
 		if($temp != null) {
 			$unique = false;
 		}
-		$temp = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `Lname` = '".$_POST['edit_Lname']."' AND `Fname` = '".$_POST['edit_Fname'].
-				"' AND `PID` != '".$_POST['old_pid']."'"));
+		$temp = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `Lname` = '".$edit_Lname."' AND `Fname` = '".$edit_Fname.
+				"' AND `PID` != '".$old_pid."'"));
 		if($temp != null) {
 			$unique = false;
 		}
 		
 		if(!$unique) {
-			echo "<div id=failure>Failed to edit ".$_POST['edit_Fname']." ".$_POST['edit_Lname']." in database; would create duplicate employee!</div>";
+			echo "<div id=failure>Failed to edit ".$edit_Fname." ".$edit_Lname." in database; would create duplicate employee!</div>";
 		}else {
-			echo "<div id=success>Successfully edited ".$_POST['edit_Fname']." ".$_POST['edit_Lname']." in database!</div>";
+			echo "<div id=success>Successfully edited ".$edit_Fname." ".$edit_Lname." in database!</div>";
 
 			//update employeeInfo
-			mysqli_query($con, "UPDATE `employeeInfo` SET `Fname` = '".$_POST['edit_Fname']."' WHERE `PID` = '".$_POST['old_pid']."'");
-			mysqli_query($con, "UPDATE `employeeInfo` SET `Lname` = '".$_POST['edit_Lname']."' WHERE `PID` = '".$_POST['old_pid']."'");
-			if($_POST['edit_type'] != null)
-				mysqli_query($con, "UPDATE `employeeInfo` SET `type` = '".$_POST['edit_type']."' WHERE `PID` = '".$_POST['old_pid']."'");
-			mysqli_query($con, "UPDATE `employeeInfo` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
+			mysqli_query($con, "UPDATE `employeeInfo` SET `Fname` = '".$edit_Fname."' WHERE `PID` = '".$old_pid."'");
+			mysqli_query($con, "UPDATE `employeeInfo` SET `Lname` = '".$edit_Lname."' WHERE `PID` = '".$old_pid."'");
+			if($_POST['edit_type'] != null) {
+				$edit_type = mysqli_real_escape_string($con, $_POST['edit_type']);
+				mysqli_query($con, "UPDATE `employeeInfo` SET `type` = '".$edit_type."' WHERE `PID` = '".$old_pid."'");
+			}
+			mysqli_query($con, "UPDATE `employeeInfo` SET `PID` = '".$edit_pid."' WHERE `PID` = '".$old_pid."'");
 			//update hoursByDay
-			mysqli_query($con, "UPDATE `hoursByDay` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
+			mysqli_query($con, "UPDATE `hoursByDay` SET `PID` = '".$edit_pid."' WHERE `PID` = '".$old_pid."'");
 			//update actSchedule
-			mysqli_query($con, "UPDATE `actSchedule` SET `PID` = '".$_POST['edit_pid']."' WHERE `PID` = '".$_POST['old_pid']."'");
+			mysqli_query($con, "UPDATE `actSchedule` SET `PID` = '".$edit_pid."' WHERE `PID` = '".$old_pid."'");
 		}
 	}
 
@@ -230,7 +237,7 @@
 //this stuff only appears when they start editing somebody
 	if($_POST['employee_pid'] != null) {
 
-		$employee = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['employee_pid']."'"));
+		$employee = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_POST['employee_pid'])."'"));
 		
 		echo "<form id='delete_employee_form' action='admin_add_edit_employees.php' method='POST'><strong>".$employee[1]." ".$employee[2]."</strong>";
 		echo "<input type='hidden' name='delete_pid' value='".$employee[0]."'><button type='submit'>Delete Employee</button></form>";

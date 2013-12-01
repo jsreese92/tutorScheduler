@@ -2,6 +2,13 @@
 include "./../common/session_validator.php";
 $con = getDatabaseConnection();
 
+$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
+	
+if($employee_info[3] != 'admin') {
+	header('HTTP/1.1 401 Unauthorized');
+	exit();
+}
+
 
 header("Content-type: application/json");
 

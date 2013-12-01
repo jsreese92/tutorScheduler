@@ -2,7 +2,7 @@
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 
-	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_SESSION['pid']."'"));
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
 
 	if($employee_info[3] != 'admin') {
 		echo "<script type = 'text/javascript'>location.href='http://$_SERVER[HTTP_HOST]/common/onyen_validator.php'</script>";
@@ -41,9 +41,9 @@
 			$day = $day_array[$d];
 			for($i=7; $i<=23; $i++) {
 				if($i < 10) {
-					mysqli_query($con, "UPDATE `openHours` SET `h0".$i."` = ".getClass($day.'0'.$i.'_val')." WHERE `day`='".$day."'");
+					mysqli_query($con, "UPDATE `openHours` SET `h0".$i."` = ".getClass($day.'0'.$i.'_val')." WHERE `day`='".mysqli_real_escape_string($con, $day)."'");
 				}else {
-					 mysqli_query($con, "UPDATE `openHours` SET `h".$i."` = ".getClass($day.$i.'_val')." WHERE `day`='".$day."'");
+					 mysqli_query($con, "UPDATE `openHours` SET `h".$i."` = ".getClass($day.$i.'_val')." WHERE `day`='".mysqli_real_escape_string($con, $day)."'");
 				}
 			}
 		}

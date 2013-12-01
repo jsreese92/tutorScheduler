@@ -32,7 +32,7 @@
 	}
 	
 	if($vfypid == $_POST['pid']) {	//meaning the validation file matches the PID given by post, thus the login is valid
-		$result = mysqli_query($con, "SELECT * FROM employeeInfo WHERE `PID` = ".$_POST['pid']);
+		$result = mysqli_query($con, "SELECT * FROM employeeInfo WHERE `PID` = ".mysqli_real_escape_string($con, $_POST['pid']));
 		if($result) {
 			$employee_info = mysqli_fetch_array($result);
 		}
@@ -42,10 +42,11 @@
 			
 			//generate an authorization cookie and setup the session data
 			$_SESSION['pid'] = $vfypid;
-			$_SESSION['authsalt'] = time() . substr(md5(rand()), 0, 16);
+			$_SESSION['authsalt'] = substr(md5(rand()), 0, 32);
+			$_SESSION['remote_address'] = $_SERVER['REMOTE_ADDR'];
 			
 			$expire = time() + 450;
-			$cookie_data = md5($_SESSION['pid'] . $_SERVER['REMOTE_ADDR'] . $_SESSION['authsalt']);
+			$cookie_data = md5($_SESSION['pid'] . $_SESSION['remote_address'] . $_SERVER['REMOTE_ADDR'] . $_SESSION['authsalt']);
 			
 			setcookie('TutorSchedulerAuth', $cookie_data, $expire, '/');
 			

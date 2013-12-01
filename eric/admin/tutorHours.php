@@ -2,14 +2,27 @@
 include "./../common/session_validator.php";
 $con = getDatabaseConnection();
 
+$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
+	
+if($employee_info[3] != 'admin') {
+	header('HTTP/1.1 401 Unauthorized');
+	exit();
+}
+
+
 header("Content-type: application/json");
 
 
 if($_POST['pid'] == null) {
 //if the request didn't come by post, they want us to return the users schedule rather than update it
 	$response = array();
-
-	$result = mysqli_query($con, "SELECT * FROM `actSchedule` WHERE `PID` = '".$_GET['tutor']."'");
+	
+	$result = mysqli_query($con, "SELECT * FROM `actSchedule` WHERE `PID` = '".mysqli_real_escape_string($con, $_GET['tutor'])."'");
+	if(mysqli_num_rows($result) == 0) {
+		header('HTTP/1.1 412 Tutor Not Found!');
+		exit();
+	}
+	
 	while($row = mysqli_fetch_array($result)){
 		for($i=7; $i<24; $i++) {
 			if($i<10) {
@@ -29,11 +42,18 @@ if($_POST['pid'] == null) {
 //else they used post, so we are meant to update the database
 	$response = array();
 	
-	$pid = $_POST['pid'];
-	$location = $_POST['location'];
-	$day = substr($_POST['daytime'], 0, 3);
-	$hour = substr($_POST['daytime'], 3, 2);
+	$pid = mysqli_real_escape_string($con, $_POST['pid']);
+	$location = mysqli_real_escape_string($con, $_POST['location']);
+	$daytime = mysqli_real_escape_string($con, $_POST['daytime']);
+	$day = substr($daytime, 0, 3);
+	$hour = substr($daytime, 3, 2);
+	//set it to 5 so that mysqli_affected_rows will return 1 even if we're not changing the value (and thus will only return false if the tutor doesn't exist)
+	mysqli_query($con, "UPDATE `actSchedule` SET `h".$hour."` = '5' WHERE `PID` = '".$pid."' AND `day` = '".$day."'");
 	mysqli_query($con, "UPDATE `actSchedule` SET `h".$hour."` = ".$location." WHERE `PID` = '".$pid."' AND `day` = '".$day."'");
+	if(mysqli_affected_rows($con) == 0) {
+		header('HTTP/1.1 412 Tutor Not Found!');
+		exit();
+	}
 	
 	$response['daytime'] = $day.$hour;
 	$response['pid'] = $pid;
