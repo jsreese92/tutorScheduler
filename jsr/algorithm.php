@@ -355,8 +355,16 @@ function scheduleAllHours(&$theSchedule,$numToSchedule,$theType,$maxPref,$minPre
   }
 }
 
+// Schedules ALL of a tutor of type=theType 3 preferences as long as they are
+// scheduled for less than their max hours, 14 for grads, 10 for ugrads. If 
+// not at their max, schedule all 2 preferences. Then, same for 1s.
+function batchScheduling(&$theScheudle, &$theType){
+
+}
+
 // TODO this heavily favors Sunday and Monday scheduling, need to spread out
-// scheduling across the whole week
+// scheduling across the whole week. Going to re-do this a little differently,
+// but leaving this in case it comes in handy later. See batchScheduling.
 function ensureGradGe14(&$theSchedule){
   global $days;
   global $hours;
@@ -366,6 +374,12 @@ function ensureGradGe14(&$theSchedule){
   global $tutorInfo;
   global $hoursWorking;
   global $hoursWorkingPerDay;
+
+  // keeps scheduling from favoring Sundays and Mondays early hours
+  // TODO doesn't work, still favors first randomly selected day
+  shuffle($days);
+  shuffle($hours);
+
   foreach($pidArray as $thePid){
     // intially skip over if tutor does not need to be scheduled
     if(($tutorInfo[$thePid]["type"] == "grad") and (intval($hoursWorking[$thePid]) < 14)){
@@ -549,7 +563,7 @@ function populateActSchedule(){
   // delete all previously existing rows
   $sql="delete from actSchedule";
   if(mysqli_query($con,$sql)){
-    echo "Deleted all rows from actSchedule table <br>";
+    //echo "Deleted all rows from actSchedule table <br>";
   }
 
   // initialize rows for every tutor
