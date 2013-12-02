@@ -565,7 +565,6 @@ function populateActSchedule(){
   }
 
   // update rows based on sasbSchedule
-  //$theArray[$theDay][$theHour]["tuples"][$thePid]=$temp;
   foreach($days as $theDay){
     foreach($hours as $theHour){
       // only bother scheduling if the writing centers are open
@@ -579,7 +578,7 @@ function populateActSchedule(){
               $sql="update actSchedule set $theHour=1
                 where PID='$thePid' and day='$theDay'";
               if(mysqli_query($con,$sql)){
-                echo"updated row";
+                //echo"updated row";
               }
               else{
                 echo "Error: " . mysqli_error($con) . "<br>";
@@ -591,10 +590,7 @@ function populateActSchedule(){
     }
   }
 
-
-
-
-
+  // TODO update rows based on glSchedule
 }
 
 // 1. SASB covered for all open hours
