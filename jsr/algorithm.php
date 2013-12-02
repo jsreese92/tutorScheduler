@@ -542,12 +542,14 @@ function populateActSchedule(){
   global $tutorInfo;
   global $hoursWorking;
   global $hoursWorkingPerDay;
+  global $sasbSchedule;
 
   // delete all previously existing rows
   $sql="delete from actSchedule";
   if(mysqli_query($con,$sql)){
     echo "Deleted all rows from actSchedule table <br>";
   }
+
   // initialize rows for every tutor
   foreach($pidArray as $thePid){
     // only initialize for grad and ugrad tutors
@@ -556,10 +558,43 @@ function populateActSchedule(){
         $sql="insert into actSchedule (PID,day,h00,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23) 
           values('$thePid','$theDay',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)";
         if(mysqli_query($con,$sql)){
+          //echo"initialized row";
         }
       }
     }
   }
+
+  // update rows based on sasbSchedule
+  //$theArray[$theDay][$theHour]["tuples"][$thePid]=$temp;
+  foreach($days as $theDay){
+    foreach($hours as $theHour){
+      // only bother scheduling if the writing centers are open
+      if($openHours[$theDay][$theHour] == 1){
+        foreach($pidArray as $thePid){
+          // only look at pids who are ugrad or grad tutors, not admins
+          if(($tutorInfo[$thePid]["type"] == "grad") or ($tutorInfo[$thePid]["type"] == "ugrad")){
+            $tuple=$sasbSchedule[$theDay][$theHour]["tuples"][$thePid];
+            if($tuple != NULL){ // if tuple exists, tutor is scheduled this hour
+              //TODO why does it require single quotes in where but not set?
+              $sql="update actSchedule set $theHour=1
+                where PID='$thePid' and day='$theDay'";
+              if(mysqli_query($con,$sql)){
+                echo"updated row";
+              }
+              else{
+                echo "Error: " . mysqli_error($con) . "<br>";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+
+
 }
 
 // 1. SASB covered for all open hours
