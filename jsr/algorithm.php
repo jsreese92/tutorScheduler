@@ -355,6 +355,8 @@ function scheduleAllHours(&$theSchedule,$numToSchedule,$theType,$maxPref,$minPre
   }
 }
 
+// TODO this heavily favors Sunday and Monday scheduling, need to spread out
+// scheduling across the whole week
 function ensureGradGe14(&$theSchedule){
   global $days;
   global $hours;
@@ -600,6 +602,7 @@ ensureTwoScheduled($sasbSchedule);
 // 2. Grad students must work at least 14 hours (at most handled later)
 ensureGradGe14($sasbSchedule);
 
+/*
 // 3. Ugrads work at most 10 hours, between 6 and 10
 ensureUgradLe10($sasbSchedule);
 
@@ -623,6 +626,7 @@ ensureLeFiveHoursPerDay($sasbSchedule);
 // 9. Staff meetings
 
 // 10. Populate actSchedule
+ */
 populateActSchedule();
 
 
