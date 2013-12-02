@@ -315,6 +315,8 @@ function ensureTwoScheduled(&$theSchedule){
   scheduleAllHours($theSchedule,2,"grad",3,1);
 }
 
+// Schedules numToSchedule tutors of type theType every hour who have
+// preference <= maxPref and >= minPref
 function scheduleAllHours(&$theSchedule,$numToSchedule,$theType,$maxPref,$minPref){
   global $days;
   global $hours;
@@ -528,6 +530,38 @@ function dayToNum($theDay){
     return -1;
 }
 
+// Removes all previously existing rows from actSchedule, and re-populates
+// them with data from sasbSchedule and glSchedule.
+function populateActSchedule(){
+  global $con;
+  global $pidArray;
+  global $days;
+  global $hours;
+  global $openHours;
+  global $preferences;
+  global $tutorInfo;
+  global $hoursWorking;
+  global $hoursWorkingPerDay;
+
+  // delete all previously existing rows
+  $sql="delete from actSchedule";
+  if(mysqli_query($con,$sql)){
+    echo "Deleted all rows from actSchedule table <br>";
+  }
+  // initialize rows for every tutor
+  foreach($pidArray as $thePid){
+    // only initialize for grad and ugrad tutors
+    if(($tutorInfo[$thePid]["type"] == "grad") or ($tutorInfo[$thePid]["type"] == "ugrad")){
+      foreach($days as $theDay){
+        $sql="insert into actSchedule (PID,day,h00,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23) 
+          values('$thePid','$theDay',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)";
+        if(mysqli_query($con,$sql)){
+        }
+      }
+    }
+  }
+}
+
 // 1. SASB covered for all open hours
 loadPref();
 ensureTwoScheduled($sasbSchedule);
@@ -541,8 +575,9 @@ ensureUgradLe10($sasbSchedule);
 // 4. No more than 5 hours in a day
 ensureLeFiveHoursPerDay($sasbSchedule);
 // TODO once we take tutors (grads mostly) we need to put them back somewhere
+// Those with less than 14 hours, put these in GL?
 
-// 5. No more than 4 in a row
+// 5. No more than 4 hours in a row
 // TODO doesn't this seem redundant? Why not just leave it at no more than
 // 5 per day?
 
@@ -555,6 +590,10 @@ ensureLeFiveHoursPerDay($sasbSchedule);
 // 8. Double check and make sure grads have 14 hours
 
 // 9. Staff meetings
+
+// 10. Populate actSchedule
+populateActSchedule();
+
 
 /*
 $arr = findLowestTuple($sasbSchedule,"mon","720360006");
