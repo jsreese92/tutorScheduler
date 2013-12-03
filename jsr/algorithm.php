@@ -35,12 +35,6 @@ function getTutorInfo(){
       $arr[$thePid]=$row; // adds PID to array
     }
   }
-  /*
-  echo"tutor info";
-  echo"<pre>";
-  var_dump($arr);
-  echo"</pre>";
-   */
   return $arr;
 }
 
@@ -214,12 +208,6 @@ class tuple {
   }
 }
 
-/*
-$sql =("select hoursByDay.*, employeeInfo.type from hoursByDay, employeeInfo where hoursByDay.PID = employeeInfo.PID");
-$result = mysqli_query($con,$sql);
-$numRows = mysqli_num_rows($result);
- */
-
 // populate array of tuples via a wildly ineffecient querying scheme
 function loadPref(){ // returns preferences tuple array
   global $con;
@@ -281,37 +269,9 @@ function numTuples(&$theArray, $theDay, $theHour){
 }
 
 // loops through preferences array starting with highest preferences, and adds
-// tuples to the given schedule until at least two people are working every
+// tuples to the given schedule until at least three people are working every
 // hour.
 function ensureThreeScheduled(&$theSchedule){
-  /*
-  global $days;
-  global $hours;
-  global $openHours;
-  global $pidArray;
-  global $preferences;
-  for($i = 3; $i >= 1; $i--){
-    foreach($days as $theDay){
-      foreach($hours as $theHour){
-        if($openHours[$theDay][$theHour] == 1){
-          foreach($pidArray as $thePid){
-            $temp = new tuple;
-            $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
-            if($temp != NULL){
-              $thePref = $temp->getPref();
-              $theType = $temp->getTheType();
-              if($thePref == $i){
-                if(numTuples($theSchedule, $theDay, $theHour) < 2){
-                  addTuple($theSchedule, $theDay, $theHour, $thePid, $thePref, $theType);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-   */
   scheduleAllHours($theSchedule,3,"grad",3,1);
 }
 
@@ -631,11 +591,13 @@ function ensureGradDaysOff(&$theSchedule){
           if(($daysWorkingArr[$thePid][$i+1] == 0) && ($daysWorkingArr[$thePid][$i+2] == 0)){
 
             // prints out span and name of grad who isn't scheduled 2 days in a row
+            /*
             $firstDay = numToDay($i);
             $lastDay = numToDay($i+2);
             $fname = $tutorInfo[$thePid]["Fname"];
             $lname = $tutorInfo[$thePid]["Lname"];
             echo"$fname, $lname, $firstDay, $lastDay <br>";
+             */
 
             // try to schedule 3rd day, if unable, schedule 2nd, etc.
             $dayToSchedule = numToDay($i+2); //selects 3rd day
@@ -681,39 +643,6 @@ function ensureGradDaysOff(&$theSchedule){
     }
   }
 }
-
-
-      /*
-      $currentDay = "";
-      $currentDayNum = -1;
-      $nextDay = "";
-      $nextDayNum = -1;
-      foreach($days as $firstDay){
-        // going to use hoursWorkingByDay that's already been created
-        if($hoursWorkingPerDay[$thePid][$firstDay] > 0){ // tutor is working
-          $currentDay = $firstDay;
-          $currentDayNum = dayToNum($currentDay);
-          // find the next day in the week that they work
-          foreach($days as $secondDay){
-            if($hoursWorkingPerDay[$thePid][$secondDay] > 0){
-              $nextDay = $secondDay;
-              $nextDayNum = dayToNum($nextDay);
-              if(($nextDayNum - $currentDayNum) > 2){
-                // TODO more than two days off in a row, start rescheduling 
-                // people. How do we want to handle the rescheduling?
-                $fname = $tutorInfo[$thePid]["Fname"] ;
-                $lname = $tutorInfo[$thePid]["Lname"];
-                echo"$thePid, $fname, $lname, $currentDay, $nextDay <br>";
-              }
-              else{
-                // NOOP, at most two days off, no rescheduling necessary
-              }
-            }
-          }
-        }
-      }
-*/
-
 
 // returns day given numeric value, i.e. 0 = "sun", 1 = "mon", ..., 6 = "sat"
 function numToDay($theNum){
@@ -847,21 +776,6 @@ ensureGradDaysOff($sasbSchedule);
 // 10. Populate actSchedule
  */
 populateActSchedule();
-
-
-/*
-$arr = findLowestTuple($sasbSchedule,"mon","720360006");
-echo"<pre>";
-var_dump($arr);
-echo"</pre>";
- */
-
-/*
-echo"hoursPerDay\n";
-echo"<pre>";
-var_dump($hoursWorkingPerDay);
-echo"</pre>";
- */
 
 // prints everybody's PID, name, and current hours scheduled
 echo"<pre>";
