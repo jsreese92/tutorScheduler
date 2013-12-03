@@ -553,6 +553,59 @@ function findLowestTuple($theSchedule, $theDay, $thePid){
   return $low;
 }
 
+// create array size 7 that has a 1 if tutor is working for corresponging
+// day, and a 0 if the tutor is not.
+function getDaysWorkingArr(){
+  global $pidArray;
+  global $tutorInfo;
+  global $hoursWorkingPerDay;
+  global $days;
+  // assoc array whose key is PID and value is an array of size 7
+  $toReturn = array();
+  foreach($pidArray as $thePid){
+    if($tutorInfo[$thePid]["type"] == "grad"){
+      // initialize every day to 0
+      $arr = array();
+      $toReturn[$thePid] = $arr;
+
+      // update daysWorkingArr
+      foreach($days as $theDay){
+        // going to use hoursWorkingByDay that's already been created
+        if($hoursWorkingPerDay[$thePid][$theDay] > 0){ // tutor is working
+          $toReturn[$thePid][] = 1;
+        }
+        else // tutor is not working
+          $toReturn[$thePid][] = 0;
+      }
+    }
+  }
+  return $toReturn;
+}
+
+// given a tutor's pid and the day, this function finds a tutor's highest
+// preference tuple for this day, and modifies the given hour, day, preference,
+// and tuple for use in later adding this tuple to the schedule. Passes the 
+// last variables by reference rather than returning an array containing all
+// of them and then updating the variables in the other function
+function gradDaysOffHelper($thePid, $theDay, &$retHour, &$retDay, &$retPref, &$retTuple, &$retBool){
+  global $hours;
+  global $preferences;
+
+  foreach($hours as $theHour){
+    $currentTuple =  $preferences[$theDay][$theHour]["tuples"][$thePid];
+    if($tuple != NULL){ // if tutor can work this day
+      $currentPref = $currentTuple->getPref();
+      if($currentPref > $maxPref){
+        $retBool = true; // at least one tuple to schedule is found
+        $retHour = $theHour;
+        $retDay = $dayToSchedule;
+        $retPref = $currentPref;
+        $retTuple = $currentTuple;
+      }
+    }
+  }
+}
+
 // TODO oh god this is ugly...
 function ensureGradDaysOff(&$theSchedule){
   global $days;
@@ -563,36 +616,8 @@ function ensureGradDaysOff(&$theSchedule){
   global $tutorInfo;
   global $hoursWorking;
   global $hoursWorkingPerDay;
-
-
-  // assoc array whose key is PID and value is an array of size 7
-  $daysWorkingArr = array(); 
-
-  //TODO factor out daysWorkingArr creation to make this function less ridiculous
-
-  // create array size 7 that has a 1 if tutor is working for corresponging
-  // day, and a 0 if the tutor is not.
-  foreach($pidArray as $thePid){
-    if($tutorInfo[$thePid]["type"] == "grad"){
-      // initialize every day to 0
-      $arr = array();
-      $daysWorkingArr[$thePid] = $arr;
-
-      // update daysWorkingArr
-      foreach($days as $theDay){
-        // going to use hoursWorkingByDay that's already been created
-        if($hoursWorkingPerDay[$thePid][$theDay] > 0){ // tutor is working
-          $daysWorkingArr[$thePid][] = 1;
-        }
-        else // tutor is not working
-          $daysWorkingArr[$thePid][] = 0;
-      }
-    }
-  }
-  echo"<pre>";
-  //var_dump($daysWorkingArr);
-  echo"</pre>";
-
+  $daysWorkingArr = getDaysWorkingArr();
+  
   // now that the array has been built, re-schedule tutors so that they have
   // no more than 2 days off
   foreach($pidArray as $thePid){
@@ -604,52 +629,33 @@ function ensureGradDaysOff(&$theSchedule){
         if($daysWorkingArr[$thePid][$i] == 0){ // not working that day
           // check next two days
           if(($daysWorkingArr[$thePid][$i+1] == 0) && ($daysWorkingArr[$thePid][$i+2] == 0)){
+
+            // prints out span and name of grad who isn't scheduled 2 days in a row
+            $firstDay = numToDay($i);
+            $lastDay = numToDay($i+2);
+            $fname = $tutorInfo[$thePid]["Fname"];
+            $lname = $tutorInfo[$thePid]["Lname"];
+            echo"$fname, $lname, $firstDay, $lastDay <br>";
+
             // try to schedule 3rd day, if unable, schedule 2nd, etc.
             $dayToSchedule = numToDay($i+2); //selects 3rd day
             $found = false; // true if tuple to schedule is found
 
             // Find hour with highest preference (not technically necessary, just a nice thing to do)
-            // TODO can probably factor this out and just return maxTuple
+            $maxHour = "";
+            $maxDay = "";
             $maxPref = 0; 
             $maxTuple =  new tuple; // tuple with highest preference
-            foreach($hours as $theHour){
-              $currentTuple =  $preferences[$dayToSchedule][$theHour]["tuples"][$thePid];
-              if($tuple != NULL){ // if tutor can work this day
-                $currentPref = $currentTuple->getPref();
-                if($currentPref > $maxPref){
-                  $found = true; // at least one tuple to schedule is found
-                  $maxPref = $currentPref;
-                  $maxTuple = $currentTuple;
-                }
-              }
-            }
+
+            gradDaysOffHelper($thePid, $dayToSchedule, $maxHour, $maxDay, $maxPref, $maxTuple, $found);
+            
             if(!$found){ // no tuple on 3rd day, try to schedule 2nd
               $dayToSchedule = numToDay($i+1); //selects 2nd day
-              foreach($hours as $theHour){
-                $currentTuple =  $preferences[$dayToSchedule][$theHour]["tuples"][$thePid];
-                if($tuple != NULL){ // if tutor can work this day
-                  $currentPref = $currentTuple->getPref();
-                  if($currentPref > $maxPref){
-                    $found = true; // at least one tuple to schedule is found
-                    $maxPref = $currentPref;
-                    $maxTuple = $currentTuple;
-                  }
-                }
-              }
+              gradDaysOffHelper($thePid, $dayToSchedule, $maxHour, $maxDay, $maxPref, $maxTuple, $found);
             }
             if(!$found){ // no tuple on 2nd day, try to schedule 1st
               $dayToSchedule = numToDay($i); //selects 1st day
-              foreach($hours as $theHour){
-                $currentTuple =  $preferences[$dayToSchedule][$theHour]["tuples"][$thePid];
-                if($tuple != NULL){ // if tutor can work this day
-                  $currentPref = $currentTuple->getPref();
-                  if($currentPref > $maxPref){
-                    $found = true; // at least one tuple to schedule is found
-                    $maxPref = $currentPref;
-                    $maxTuple = $currentTuple;
-                  }
-                }
-              }
+              gradDaysOffHelper($thePid, $dayToSchedule, $maxHour, $maxDay, $maxPref, $maxTuple, $found);
             }
             // if there's no available tuple to be scheduled, then set $maxTuple
             // to NULL and just don't worry about it. (extremely unlikely)
@@ -659,7 +665,16 @@ function ensureGradDaysOff(&$theSchedule){
 
             // at this point we have a tuple, $maxTuple, to schedule for one
             // of these days to keep grads from being off for more than 2 days
-            // in a row.
+            // in a row. Just going to schedule 1 hour for this day, rather
+            // than worrying about scheduling a cluster of hours.
+            if($maxTuple != NULL){
+              $thePref = $maxTuple->getPref();
+              $theType = $maxTuple->getTheType();
+              addTuple($theSchedule,$maxDay,$maxHour,$thePid,$thePref,$theType);
+              removeTuple($preferences,$maxDay,$maxHour,$thePid);
+              $hoursWorking[$thePid] = $hoursWorking[$thePid] + 1;
+              $hoursWorkingPerDay[$thePid][$theDay] = $hoursWorkingPerDay[$thePid][$theDay] + 1 ;
+            }
           }
         }
       }
