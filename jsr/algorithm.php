@@ -283,7 +283,7 @@ function numTuples(&$theArray, $theDay, $theHour){
 // loops through preferences array starting with highest preferences, and adds
 // tuples to the given schedule until at least two people are working every
 // hour.
-function ensureTwoScheduled(&$theSchedule){
+function ensureThreeScheduled(&$theSchedule){
   /*
   global $days;
   global $hours;
@@ -312,7 +312,7 @@ function ensureTwoScheduled(&$theSchedule){
     }
   }
    */
-  scheduleAllHours($theSchedule,2,"grad",3,1);
+  scheduleAllHours($theSchedule,3,"grad",3,1);
 }
 
 // Schedules numToSchedule tutors of type theType every hour who have
@@ -439,7 +439,7 @@ function ensureGradGe14(&$theSchedule){
   global $hoursWorkingPerDay;
 
   // keeps scheduling from favoring Sundays and Mondays early hours
-  // TODO doesn't work, still favors first randomly selected day
+  // doesn't work, still favors first randomly selected day
   shuffle($days);
   shuffle($hours);
 
@@ -468,6 +468,8 @@ function ensureGradGe14(&$theSchedule){
 }
  */
 
+// Same as above, this should be obsolete thanks to batchSchedule
+/*
 function ensureUgradLe10(&$theSchedule){
   global $days;
   global $hours;
@@ -500,6 +502,7 @@ function ensureUgradLe10(&$theSchedule){
     }
   }
 }
+ */
 
 // Removes tuples from given schedule if a tutor is working more than five 
 // hours in a shift. Places tuple back in preferences array since that tutor 
@@ -559,8 +562,56 @@ function ensureGradDaysOff(&$theSchedule){
   global $tutorInfo;
   global $hoursWorking;
   global $hoursWorkingPerDay;
+
+  // create array size 7 that has a 1 if tutor is working for corresponging
+  // day, and a 0 if the tutor is not.
+  $daysWorkingArr = array();
   foreach($pidArray as $thePid){
     if($tutorInfo[$thePid]["type"] == "grad"){
+      // initialize every day to 0
+      $arr = array(
+        "sun" => 0,
+        "mon" => 0,
+        "tue" => 0,
+        "wed" => 0,
+        "thu" => 0,
+        "fri" => 0,
+        "sat" => 0);
+      $daysWorkingArr[$thePid] = $arr;
+
+      // update daysWorkingArr
+      foreach($days as $theDay){
+        // going to use hoursWorkingByDay that's already been created
+        if($hoursWorkingPerDay[$thePid][$theDay] > 0){ // tutor is working
+          $daysWorkingArr[$thePid][$theDay] = 1;
+        }
+        else // tutor is not working
+          $daysWorkingArr[$thePid][$theDay] = 0;
+      }
+    }
+  }
+  echo"<pre>";
+  //var_dump($daysWorkingArr);
+  echo"</pre>";
+
+  $temp = $daysWorkingArr["703270030"]["mon"];
+  echo"$temp";
+
+  // now that the array has been built, re-schedule tutors so that they have
+  // no more than 2 days off
+
+  foreach($pidArray as $thePid){
+    if($tutorInfo[$thePid]["type"] == "grad"){
+      foreach($days as $theDay){
+        $workingBool = $daysWorkingArr[$thePid][$theDay];
+        echo"$workingBool";
+      }
+    }
+  }
+}
+
+
+      /*
       $currentDay = "";
       $currentDayNum = -1;
       $nextDay = "";
@@ -578,6 +629,9 @@ function ensureGradDaysOff(&$theSchedule){
               if(($nextDayNum - $currentDayNum) > 2){
                 // TODO more than two days off in a row, start rescheduling 
                 // people. How do we want to handle the rescheduling?
+                $fname = $tutorInfo[$thePid]["Fname"] ;
+                $lname = $tutorInfo[$thePid]["Lname"];
+                echo"$thePid, $fname, $lname, $currentDay, $nextDay <br>";
               }
               else{
                 // NOOP, at most two days off, no rescheduling necessary
@@ -586,8 +640,25 @@ function ensureGradDaysOff(&$theSchedule){
           }
         }
       }
-    }
-  }
+*/
+
+
+// returns day given numeric value, i.e. 0 = "sun", 1 = "mon", ..., 6 = "sat"
+function numToDay($theNum){
+  if($theNum == 0)
+    return "sun";
+  elseif($theNum == 1)
+    return "mon";
+  elseif($theNum == 2)
+    return "tue";
+  elseif($theNum == 3)
+    return "wed";
+  elseif($theNum == 4)
+    return "thu";
+  elseif($theNum == 5)
+    return "fri";
+  elseif($theNum == 6)
+    return "sat";
 }
 
 // returns numeric value of day, i.e. "sun" = 0, "mon" = 1, ... , "sat" = 6
@@ -675,27 +746,25 @@ function populateActSchedule(){
 
 // 1. SASB covered for all open hours
 loadPref();
-ensureTwoScheduled($sasbSchedule);
+ensureThreeScheduled($sasbSchedule);
 
 // 2. Grad students must work at least 14 hours (at most handled later)
 batchScheduling($sasbSchedule,"grad");
 
-/*
 // 3. Ugrads work at most 10 hours, between 6 and 10
-ensureUgradLe10($sasbSchedule);
+batchScheduling($sasbSchedule,"ugrad");
 
 // 4. No more than 5 hours in a day
 ensureLeFiveHoursPerDay($sasbSchedule);
-// TODO once we take tutors (grads mostly) we need to put them back somewhere
-// Those with less than 14 hours, put these in GL?
 
 // 5. No more than 4 hours in a row
 // TODO doesn't this seem redundant? Why not just leave it at no more than
 // 5 per day?
 
 // 6. Grads get no more than 2 days off in a row
-//ensureGradDaysOff($sasbSchedule);
+ensureGradDaysOff($sasbSchedule);
 
+/*
 // 7. Move people to GL
 // TODO make array of min and max allowed tutors for each hour
 
