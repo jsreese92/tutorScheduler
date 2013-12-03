@@ -569,42 +569,40 @@ function ensureGradDaysOff(&$theSchedule){
   foreach($pidArray as $thePid){
     if($tutorInfo[$thePid]["type"] == "grad"){
       // initialize every day to 0
-      $arr = array(
-        "sun" => 0,
-        "mon" => 0,
-        "tue" => 0,
-        "wed" => 0,
-        "thu" => 0,
-        "fri" => 0,
-        "sat" => 0);
+      $arr = array();
       $daysWorkingArr[$thePid] = $arr;
 
       // update daysWorkingArr
       foreach($days as $theDay){
         // going to use hoursWorkingByDay that's already been created
         if($hoursWorkingPerDay[$thePid][$theDay] > 0){ // tutor is working
-          $daysWorkingArr[$thePid][$theDay] = 1;
+          $daysWorkingArr[$thePid][] = 1;
         }
         else // tutor is not working
-          $daysWorkingArr[$thePid][$theDay] = 0;
+          $daysWorkingArr[$thePid][] = 0;
       }
     }
   }
   echo"<pre>";
-  //var_dump($daysWorkingArr);
+  var_dump($daysWorkingArr);
   echo"</pre>";
-
-  $temp = $daysWorkingArr["703270030"]["mon"];
-  echo"$temp";
 
   // now that the array has been built, re-schedule tutors so that they have
   // no more than 2 days off
-
   foreach($pidArray as $thePid){
     if($tutorInfo[$thePid]["type"] == "grad"){
-      foreach($days as $theDay){
-        $workingBool = $daysWorkingArr[$thePid][$theDay];
-        echo"$workingBool";
+      //TODO handle weekend wraparound cases
+
+      // If there are more than two days off from Sunday to Friday:
+      for($i=0; $i<3; $i++){ // stops checking at Wednesday since not handling wraparound
+        if($daysWorkingArr[$thePid][$i] == 0){ // not working that day
+          // check next two days
+          if(($daysWorkingArr[$thePid][$i+1] == 0) && ($daysWorkingArr[$thePid][$i+2] == 0)){
+            // try to schedule 3rd day, if unable, schedule 2nd, if unable,
+            // schedule 1st. If unable, no resolution exists
+
+          }
+        }
       }
     }
   }
