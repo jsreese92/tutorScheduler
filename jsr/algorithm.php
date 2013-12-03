@@ -594,13 +594,19 @@ function ensureGradDaysOff(&$theSchedule){
       //TODO handle weekend wraparound cases
 
       // If there are more than two days off from Sunday to Friday:
-      for($i=0; $i<3; $i++){ // stops checking at Wednesday since not handling wraparound
+      for($i=0; $i<4; $i++){ // stops checking at Wednesday since not handling wraparound
         if($daysWorkingArr[$thePid][$i] == 0){ // not working that day
           // check next two days
           if(($daysWorkingArr[$thePid][$i+1] == 0) && ($daysWorkingArr[$thePid][$i+2] == 0)){
             // try to schedule 3rd day, if unable, schedule 2nd, if unable,
             // schedule 1st. If unable, no resolution exists
-
+            $dayToSchedule = numToDay($i+2);
+            $foundHourToSchedule = false;
+            foreach($hours as $theHour){
+              if(!$foundHourToSchedule){
+                $tuple =  $preferences[$dayToSchedule][$theHour]["tuples"][$thePid];
+              }
+            }
           }
         }
       }
