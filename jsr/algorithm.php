@@ -358,13 +358,76 @@ function scheduleAllHours(&$theSchedule,$numToSchedule,$theType,$maxPref,$minPre
 // Schedules ALL of a tutor of type=theType 3 preferences as long as they are
 // scheduled for less than their max hours, 14 for grads, 10 for ugrads. If 
 // not at their max, schedule all 2 preferences. Then, same for 1s.
-function batchScheduling(&$theScheudle, &$theType){
+function batchScheduling(&$theSchedule, $theType){
+  global $days;
+  global $hours;
+  global $openHours;
+  global $pidArray;
+  global $preferences;
+  global $tutorInfo;
+  global $hoursWorking;
+  global $hoursWorkingPerDay;
 
+  foreach($pidArray as $thePid){
+    if($tutorInfo[$thePid]["type"] == "$theType"){
+      if($theType == "grad")
+        $minHours = 14;
+      elseif($theType == "ugrad")
+        $minHours = 10;
+      if($hoursWorking[$thePid] < $minHours){
+        // schedule all threes
+        scheduleByPref($theSchedule, 3, $thePid);
+
+        if($hoursWorking[$thePid] < $minHours){
+          // schedule all twos
+          scheduleByPref($theSchedule, 2, $thePid);
+
+          if($hoursWorking[$thePid] < $minHours){
+            // schedule all ones
+            scheduleByPref($theSchedule, 1, $thePid);
+          }
+        }
+      }
+    }
+  }
 }
 
-// TODO this heavily favors Sunday and Monday scheduling, need to spread out
+function scheduleByPref(&$theSchedule, $requiredPref, $thePid){
+  global $days;
+  global $hours;
+  global $openHours;
+  global $pidArray;
+  global $preferences;
+  global $tutorInfo;
+  global $hoursWorking;
+  global $hoursWorkingPerDay;
+
+  foreach($days as $theDay){
+    foreach($hours as $theHour){
+      // make sure writing center is open at this hour
+      if($openHours[$theDay][$theHour] == 1){
+        $temp = new tuple;
+        $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
+        if($temp != NULL){
+          $thePref = $temp->getPref();
+          $theType = $temp->getTheType();
+          if($thePref == $requiredPref){
+            addTuple($theSchedule,$theDay,$theHour,$thePid,$thePref,$theType);
+            removeTuple($preferences,$theDay,$theHour,$thePid);
+            $hoursWorking[$thePid] = $hoursWorking[$thePid] + 1;
+            $hoursWorkingPerDay[$thePid][$theDay] = $hoursWorkingPerDay[$thePid][$theDay] + 1;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+// This heavily favors Sunday and Monday scheduling, need to spread out
 // scheduling across the whole week. Going to re-do this a little differently,
 // but leaving this in case it comes in handy later. See batchScheduling.
+/*
 function ensureGradGe14(&$theSchedule){
   global $days;
   global $hours;
@@ -403,6 +466,7 @@ function ensureGradGe14(&$theSchedule){
     }
   }
 }
+ */
 
 function ensureUgradLe10(&$theSchedule){
   global $days;
@@ -614,7 +678,7 @@ loadPref();
 ensureTwoScheduled($sasbSchedule);
 
 // 2. Grad students must work at least 14 hours (at most handled later)
-ensureGradGe14($sasbSchedule);
+batchScheduling($sasbSchedule,"grad");
 
 /*
 // 3. Ugrads work at most 10 hours, between 6 and 10
