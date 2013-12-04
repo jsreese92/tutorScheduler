@@ -10,6 +10,7 @@ if (mysqli_connect_errno($con)){
 
 // global variables
 $sasbSchedule = initializeTupleArray();
+$glSchedule = initializeTupleArray();
 $pidArray = getPids();
 $tutorInfo = getTutorInfo();
 $preferences = initializeTupleArray();
@@ -19,7 +20,7 @@ $hoursWorking = initializeHoursWorking();
 $hoursWorkingPerDay = initializeHoursWorkingPerDay();
 $openHours = getOpenHours();
 $GRAD_HOURS = 14;
-$UGRAD_HOURS = 6;
+$UGRAD_HOURS = 5;
 
 // returns assoc array with PID as the key and array containing Fname, Lname, and type as value
 function getTutorInfo(){
@@ -314,6 +315,7 @@ function addTuple(&$theArray, $theDay, $theHour, $thePid, $thePref, $theType){
   $theArray[$theDay][$theHour]["tuples"][$thePid]=$temp;
 }
 
+// returns number of tuples in an array given day and hour
 function numTuples(&$theArray, $theDay, $theHour){
   return sizeof($theArray[$theDay][$theHour]["tuples"]);
 }
@@ -628,7 +630,6 @@ function gradDaysOffHelper($thePid, $theDay, &$retHour, &$retDay, &$retPref, &$r
   }
 }
 
-// TODO oh god this is ugly...
 function ensureGradDaysOff(&$theSchedule){
   global $days;
   global $hours;
@@ -732,7 +733,7 @@ function dayToNum($theDay){
     return 1;
   else if ($theDay == "tue")
     return 2;
-  if($theDay == "wed")
+  else if($theDay == "wed")
     return 3;
   else if ($theDay == "thu")
     return 4;
@@ -757,6 +758,7 @@ function populateActSchedule(){
   global $hoursWorking;
   global $hoursWorkingPerDay;
   global $sasbSchedule;
+  global $glSchedule;
 
   // delete all previously existing rows
   $sql="delete from actSchedule";
@@ -788,7 +790,6 @@ function populateActSchedule(){
           if(($tutorInfo[$thePid]["type"] == "grad") or ($tutorInfo[$thePid]["type"] == "ugrad")){
             $tuple=$sasbSchedule[$theDay][$theHour]["tuples"][$thePid];
             if($tuple != NULL){ // if tuple exists, tutor is scheduled this hour
-              //TODO why does it require single quotes in where but not set?
               $sql="update actSchedule set $theHour=1
                 where PID='$thePid' and day='$theDay'";
               if(mysqli_query($con,$sql)){
@@ -804,7 +805,42 @@ function populateActSchedule(){
     }
   }
 
-  // TODO update rows based on glSchedule
+  // TODO factor these out into functions
+  foreach($days as $theDay){
+    foreach($hours as $theHour){
+      // only bother scheduling if the writing centers are open
+      if($openHours[$theDay][$theHour] == 1){
+        foreach($pidArray as $thePid){
+          // only look at pids who are ugrad or grad tutors, not admins
+          if(($tutorInfo[$thePid]["type"] == "grad") or ($tutorInfo[$thePid]["type"] == "ugrad")){
+            $tuple=$glSchedule[$theDay][$theHour]["tuples"][$thePid];
+            if($tuple != NULL){ // if tuple exists, tutor is scheduled this hour
+              $sql="update actSchedule set $theHour=2
+                where PID='$thePid' and day='$theDay'";
+              if(mysqli_query($con,$sql)){
+                //echo"updated row";
+              }
+              else{
+                echo "Error: " . mysqli_error($con) . "<br>";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /*
+  echo"<pre>";
+  echo"gl<br>";
+  var_dump($glSchedule);
+  echo"</pre>";
+
+  echo"<pre>";
+  echo"sasb<br>";
+  var_dump($sasbSchedule);
+  echo"</pre>";
+   */
 }
 
 // returns assoc array size 2 with "day" and "hour" such that they have
@@ -886,6 +922,49 @@ function ensureMaxHours(&$theSchedule){
   }
 }
 
+function moveToGl(&$theSchedule){
+  global $days, $hours, $glSchedule; 
+
+  foreach($days as $theDay){
+    foreach($hours as $theHour){
+      $numWorking = numTuples($theSchedule, $theDay, $theHour);
+      if($numWorking >= 4){
+        // move two to GL, one has to be a grad
+        $tuples = $theSchedule[$theDay][$theHour]["tuples"];
+        $twoScheduled = false; // quits scheduling once two are found
+        foreach($tuples as $theTuple){
+          if(!$twoScheduled){
+            $currentType = $theTuple->getTheType();
+            if($currentType == "grad"){
+              $thePref = $theTuple->getPref();
+              $thePid = $theTuple->getPid();
+              $theType = $theTuple->getTheType();
+              // schedule this person and set gradScheduled to true
+              addTuple($glSchedule,$theDay,$theHour,$thePid,$thePref,$theType);
+              removeTuple($theSchedule,$theDay,$theHour,$thePid);
+              //echo"first added: $theDay $theHour: $thePid $thePref $theType, ";
+
+              $newTuples = $theSchedule[$theDay][$theHour]["tuples"];
+              foreach($newTuples as $newTuple){
+                if(!$twoScheduled){
+                  $newPid = $newTuple->getPid();
+                  $newPref = $theTuple->getPref();
+                  $newType = $theTuple->getTheType();
+                  //echo"second added: $newPid, $newPref, $newType<br>";
+                  addTuple($glSchedule,$theDay,$theHour,$newPid,$newPref,$newType);
+                  removeTuple($theSchedule,$theDay,$theHour,$newPid);
+                  $twoScheduled = true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
 // 1. SASB covered for all open hours
 loadPref();
 ensureThreeScheduled($sasbSchedule);
@@ -902,21 +981,18 @@ ensureLeFiveHoursPerDay($sasbSchedule);
 // 5. Grads get no more than 2 days off in a row
 ensureGradDaysOff($sasbSchedule);
 
-// 6. Ensure grads scheduled for 14 hours exactly
+// 6. Ensure grads scheduled for 14 hours exactly and ugrads for 6
 ensureGradGe14($sasbSchedule);
 ensureMaxHours($sasbSchedule);
 
 // 7. Move people to GL
-// TODO make array of min and max allowed tutors for each hour
-
-// 8. Double check and make sure grads have 14 hours
-
-// 9. Staff meetings
+moveToGl($sasbSchedule);
 
 // 10. Populate actSchedule
 populateActSchedule();
 
 // prints everybody's PID, name, and current hours scheduled
+/*
 echo"<pre>";
 foreach($pidArray as $thePid){
   $fname = $tutorInfo[$thePid]["Fname"];
@@ -925,4 +1001,5 @@ foreach($pidArray as $thePid){
   echo"$thePid, $fname, $lname, $type, $hoursWorking[$thePid]\n";
 }
 echo"</pre>";
+ */
 ?>
