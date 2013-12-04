@@ -274,12 +274,23 @@ var printHours = function(data, status, jqxhr) {
 			 success: function(data) {
 				var comment_div = $("#tutor_comments");
 				comment_div.empty();
-				comment_div.append("<strong>Comments: </strong>");
+				comment_div.append("<strong>Total hours: </strong>");
+				comment_div.append(getNumHoursWorking);
+				comment_div.append("<strong> Comments: </strong>");
 				comment_div.append(data);
 			 },
 			 error: function(jqxhr, status, error) {alert(error);}
 			});
 
+};
+var getNumHoursWorking = function() {
+	var total = 0;
+	$("table#schedule td").each(function(i,e) {
+		if($(e).hasClass('class_1') || $(e).hasClass('class_2'))
+			total++;
+	});
+	
+	return total;
 };
 
 var goBack = function() {

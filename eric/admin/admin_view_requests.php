@@ -82,7 +82,7 @@
 			}else echo "<td class='".($i+6)."'>".numToClass($row[$i])."</td>";
 		}
 		echo "</tr>\n";
-		}
+	}
 		
 ?>
 </tbody></table>
