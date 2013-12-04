@@ -18,6 +18,8 @@ $hours = array(h00,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h
 $hoursWorking = initializeHoursWorking();
 $hoursWorkingPerDay = initializeHoursWorkingPerDay();
 $openHours = getOpenHours();
+$GRAD_HOURS = 14;
+$UGRAD_HOURS = 6;
 
 // returns assoc array with PID as the key and array containing Fname, Lname, and type as value
 function getTutorInfo(){
@@ -387,13 +389,15 @@ function batchScheduling(&$theSchedule, $theType){
   global $tutorInfo;
   global $hoursWorking;
   global $hoursWorkingPerDay;
+  global $GRAD_HOURS;
+  global $UGRAD_HOURS;
 
   foreach($pidArray as $thePid){
     if($tutorInfo[$thePid]["type"] == "$theType"){
       if($theType == "grad")
-        $minHours = 14;
+        $minHours = $GRAD_HOURS;
       elseif($theType == "ugrad")
-        $minHours = 10;
+        $minHours = $UGRAD_HOURS;
       if($hoursWorking[$thePid] < $minHours){
         // schedule all threes
         scheduleByPref($theSchedule, 3, $thePid);
@@ -845,31 +849,41 @@ function containsTutor(&$theSchedule, $theDay, $theHour,$thePid){
   return false;
 }
 
-function ensureGrad14Hours(&$theSchedule){
-  global $days;
-  global $hours;
+function ensureMaxHours(&$theSchedule){
+  global $days, $hours, $pidArray, $tutorInfo, $GRAD_HOURS, $UGRAD_HOURS,
+    $hoursWorking;
 
   $numWorkingArr = array();
   $numWorkingArr = getNumWorkingArr($theSchedule);
 
-  $arr = getTutorMaxDay($theSchedule, $numWorkingArr, "720328470");
-  $day = $arr["day"];
-  $hour = $arr["hour"];
-  echo"$day $hour";
-  /*
-  $bool = containsTutor($theSchedule, "tue", "h00", "712427814");
-  if($bool)
-    echo "true";
-  else
-    echo "false";
-   */
+  foreach($pidArray as $thePid){
+    $theType = $tutorInfo[$thePid]["type"];
+    if($theType == "grad" || $theType == "ugrad"){
+      if($theType == "grad")
+        $maxHours = $GRAD_HOURS;
+      elseif($theType == "ugrad")
+        $maxHours = $UGRAD_HOURS;
+      $numWorking = $hoursWorking[$thePid];
+      while($numWorking > $maxHours){
+        //unschedule one hour
+        $maxArr= getTutorMaxDay($theSchedule,$numWorkingArr,$thePid);
+        $maxDay = $maxArr["day"];
+        $maxHour = $maxArr["hour"];
 
+        $currentTuple = $theSchedule[$maxDay][$maxHour]["tuples"][$thePid];
+        echo"<pre>";
+       // var_dump($currentTuple);
+        echo"</pre>";
+        $thePref = $currentTuple->getPref();
 
-  
-
-
-
-
+        addTuple($preferences,$maxDay,$maxHour,$thePid,$thePref,$theType);
+        removeTuple($theSchedule,$maxDay,$maxHour,$thePid);
+        $hoursWorking[$thePid]= $hoursWorking[$thePid] - 1;
+        $hoursWorkingPerDay[$thePid][$maxDay] = $hoursWorkingPerDay[$thePid][$maxDay] - 1 ;
+        $numWorking = $hoursWorking[$thePid];
+      }
+    }
+  }
 }
 
 // 1. SASB covered for all open hours
@@ -890,7 +904,7 @@ ensureGradDaysOff($sasbSchedule);
 
 // 6. Ensure grads scheduled for 14 hours exactly
 ensureGradGe14($sasbSchedule);
-ensureGrad14Hours($sasbSchedule);
+ensureMaxHours($sasbSchedule);
 
 // 7. Move people to GL
 // TODO make array of min and max allowed tutors for each hour
