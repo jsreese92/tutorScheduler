@@ -258,9 +258,12 @@ var printHours = function(data, status, jqxhr) {
 	});
 	
 	$.each(data, function(i, e) {
-		var cell = $("#schedule td[data-daytime='"+i+"'");
-		if(!cell.hasClass('na')) {
-			cell.addClass(e);
+		if(i != 'pid') {
+			var cell = $("#schedule td[data-daytime='"+i+"']");
+			
+			if(!cell.hasClass('na')) {
+				cell.addClass(e);
+			}
 		}
 	});
 	
