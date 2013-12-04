@@ -1,0 +1,123 @@
+@CHARSET "UTF-8";
+
+.username {
+	color: #0080FF;
+}
+
+.invalid {
+	border; solid;
+	border-color: red;
+	border-width: 3px;
+}
+.error_span {
+	color: red;
+}
+
+.arrow_right {
+	float:right;
+}
+.arrow_left {
+	float:left;
+}
+
+div#page_container_div {
+	width: 80%;
+	margin: auto;
+}
+
+div#month_div {
+	outline: solid black 1px;
+	padding: 10px;
+	margin: auto;
+}
+div#day_div {
+	margin: 3px;
+	border: thin solid black;
+	width: 35%;
+	float: left;
+}
+div#event_div {
+	height: 425px;
+	padding: 3px;
+	border: thin solid black;
+	width: 63.5%;
+	float: left;
+}
+div#day_div_inner {
+	height: 350px;
+	overflow: scroll;
+}
+div#day_event_container {
+	border: thin solid black;
+	float: left;
+	width: 80%;
+	height: 1440px;
+}
+div#day_time_container {
+	float: left;
+	width: 16%;
+	height: 1440px;
+}
+div#day_event_container div.date_event {
+	background-color: #FF4D4D;
+	overflow: hidden;
+}
+
+h1#month_text, h2#day_text, h1#event_title_text {
+	text-align: center;
+}
+
+table {
+	margin: auto;
+	border-collapse: collapse;
+}
+tr#calendar_header {
+	font-weight: bold;
+	font-size: 125%;
+	
+}
+table td.active {
+	background-color: #ADFFFA;
+}
+td.today {
+	background-color: #FCFF8A;
+}
+table#month_table td {
+	position: relative;
+	padding: 5px;
+	text-align: center;
+	border: solid black 1px;
+	width: 10%;
+	height:100px;
+}
+table#month_table td.first_td {
+	width: 2%;
+}
+td.na {
+	background-color: #DEDEDE;
+}
+
+td {
+	position: relative;
+	padding: 5px;
+	text-align: center;
+	width: 10%;
+	height:10px;
+}
+
+span.date_num {
+	position: absolute;
+	left: 5%;
+	top: 5%;
+}
+
+img.arrow_left:hover, img.arrow_right:hover {
+	width: 35px;
+}
+h1#month_text:hover , h2#day_text:hover{
+	text-decoration: underline;
+}
+
+.center {
+	text-align: center;
+}
