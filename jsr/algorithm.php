@@ -91,6 +91,41 @@ function initializeDay($theDay){
   return ${$theDay};
 }
 
+function initializeDayByHours($theDay){
+  ${$theDay} = initializeHoursInDay();
+  return ${$theDay};
+}
+
+function initializeHoursInDay(){
+  $day = array(
+    "h00" => 0,
+    "h01" => 0,
+    "h02" => 0,
+    "h03" => 0,
+    "h04" => 0,
+    "h05" => 0,
+    "h06" => 0,
+    "h07" => 0,
+    "h08" => 0,
+    "h09" => 0,
+    "h10" => 0,
+    "h11" => 0,
+    "h12" => 0,
+    "h13" => 0,
+    "h14" => 0,
+    "h15" => 0,
+    "h16" => 0,
+    "h17" => 0,
+    "h18" => 0,
+    "h19" => 0,
+    "h20" => 0,
+    "h21" => 0,
+    "h22" => 0,
+    "h23" => 0
+  );
+  return $day;
+}
+
 function initializeHours(){
   $day = array(
     "h00" => array(
@@ -182,6 +217,19 @@ function initializeTupleArray(){
   return $arr;
 }
 
+function initializeNumWorking(){
+  $arr = array(
+    "sun" => initializeDayByHours("sun"),
+    "mon" => initializeDayByHours("mon"),
+    "tue" => initializeDayByHours("tue"),
+    "wed" => initializeDayByHours("wed"),
+    "thu" => initializeDayByHours("thu"),
+    "fri" => initializeDayByHours("fri"),
+    "sat" => initializeDayByHours("sat"),
+  );
+  return $arr;
+}
+
 // tuple for an individual's preference on a given day and hour
 class tuple {
   public $pid;
@@ -266,6 +314,18 @@ function addTuple(&$theArray, $theDay, $theHour, $thePid, $thePref, $theType){
 
 function numTuples(&$theArray, $theDay, $theHour){
   return sizeof($theArray[$theDay][$theHour]["tuples"]);
+}
+
+function getNumWorkingArr(&$theSchedule){
+  global $days;
+  global $hours;
+  $toReturn = initializeNumWorking(); 
+  foreach($days as $theDay){
+    foreach($hours as $theHour){
+      $toReturn[$theDay][$theHour] = numTuples($theSchedule,$theDay,$theHour);
+    }
+  }
+  return $toReturn;
 }
 
 // loops through preferences array starting with highest preferences, and adds
@@ -387,7 +447,6 @@ function scheduleByPref(&$theSchedule, $requiredPref, $thePid){
 // This heavily favors Sunday and Monday scheduling, need to spread out
 // scheduling across the whole week. Going to re-do this a little differently,
 // but leaving this in case it comes in handy later. See batchScheduling.
-/*
 function ensureGradGe14(&$theSchedule){
   global $days;
   global $hours;
@@ -426,7 +485,6 @@ function ensureGradGe14(&$theSchedule){
     }
   }
 }
- */
 
 // Same as above, this should be obsolete thanks to batchSchedule
 /*
@@ -745,6 +803,75 @@ function populateActSchedule(){
   // TODO update rows based on glSchedule
 }
 
+// returns assoc array size 2 with "day" and "hour" such that they have
+// the greatest number of tutors working when that individual tutor is also scheduled
+function getTutorMaxDay(&$theSchedule, $theNumWorkingArr, $thePid){
+  global $days;
+  global $hours;
+
+  $arr = array(
+    "day" => "",
+    "hour" => ""
+  );
+
+  $maxNumWorking = 0;
+  foreach($days as $theDay){
+    foreach($hours as $theHour){
+      $currentNumWorking = $theNumWorkingArr[$theDay][$theHour];
+      $contains = containsTutor($theSchedule, $theDay, $theHour, $thePid);
+      if(($currentNumWorking > $maxNumWorking) && $contains){
+        $arr["day"] = $theDay;
+        $arr["hour"] = $theHour;
+        $maxNumWorking = $currentNumWorking;
+      }
+    }
+  }
+  /*
+  echo"<pre>";
+  var_dump($arr);
+  echo"</pre>";
+   */
+  return $arr;
+}
+
+function containsTutor(&$theSchedule, $theDay, $theHour,$thePid){
+  $tuples = $theSchedule[$theDay][$theHour]["tuples"];
+  foreach($tuples as $theTuple){
+    $currentPid = $theTuple->getPid();
+    if($currentPid == $thePid){ 
+      return true;
+    }
+  }
+  return false;
+}
+
+function ensureGrad14Hours(&$theSchedule){
+  global $days;
+  global $hours;
+
+  $numWorkingArr = array();
+  $numWorkingArr = getNumWorkingArr($theSchedule);
+
+  $arr = getTutorMaxDay($theSchedule, $numWorkingArr, "720328470");
+  $day = $arr["day"];
+  $hour = $arr["hour"];
+  echo"$day $hour";
+  /*
+  $bool = containsTutor($theSchedule, "tue", "h00", "712427814");
+  if($bool)
+    echo "true";
+  else
+    echo "false";
+   */
+
+
+  
+
+
+
+
+}
+
 // 1. SASB covered for all open hours
 loadPref();
 ensureThreeScheduled($sasbSchedule);
@@ -758,14 +885,13 @@ batchScheduling($sasbSchedule,"ugrad");
 // 4. No more than 5 hours in a day
 ensureLeFiveHoursPerDay($sasbSchedule);
 
-// 5. No more than 4 hours in a row
-// TODO doesn't this seem redundant? Why not just leave it at no more than
-// 5 per day?
-
-// 6. Grads get no more than 2 days off in a row
+// 5. Grads get no more than 2 days off in a row
 ensureGradDaysOff($sasbSchedule);
 
-/*
+// 6. Ensure grads scheduled for 14 hours exactly
+ensureGradGe14($sasbSchedule);
+ensureGrad14Hours($sasbSchedule);
+
 // 7. Move people to GL
 // TODO make array of min and max allowed tutors for each hour
 
@@ -774,7 +900,6 @@ ensureGradDaysOff($sasbSchedule);
 // 9. Staff meetings
 
 // 10. Populate actSchedule
- */
 populateActSchedule();
 
 // prints everybody's PID, name, and current hours scheduled
@@ -785,5 +910,5 @@ foreach($pidArray as $thePid){
   $type = $tutorInfo[$thePid]["type"];
   echo"$thePid, $fname, $lname, $type, $hoursWorking[$thePid]\n";
 }
-echo"<pre>";
+echo"</pre>";
 ?>
