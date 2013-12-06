@@ -1,6 +1,15 @@
 <?php
 // Create connection
-include "./common/database_validator.php";
+include "./../common/session_validator.php";
+
+$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
+	
+if($employee_info[3] != 'admin') {
+	header('HTTP/1.1 401 Unauthorized');
+	exit();
+}
+
+
 $con = getDatabaseConnection();
 
 // Check connection
@@ -1003,3 +1012,25 @@ foreach($pidArray as $thePid){
 echo"</pre>";
  */
 ?>
+
+<!DOCTYPE html>
+<html>
+	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
+	<script type="text/javascript" src="./../common/jquery-1.10.2.min.js"></script>
+	<!--script type="text/javascript" src="./algorithm.js"></script-->
+	<meta charset="UTF-8">
+	
+<script>
+function goBack(){
+	window.location = './admin.php';
+};
+function logout(){
+	window.location = './../common/logout.php';
+};
+</script>
+<body>
+<h1>Algorithm has finished</h1>
+<button type='button' onclick='goBack()'>Back to Administrator Overview Page</button><br>
+<button type='button' onclick='logout()'>Logout</button>
+</body>
+</html>

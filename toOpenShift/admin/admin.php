@@ -1,13 +1,13 @@
 <?php
-	include "./../common/database_validator.php";
+	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 
-
-	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$validation_url = str_replace("admin/admin.php", "common/validator.php", $actual_url);
-
-	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
-
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
+	
+	if($employee_info[3] != 'admin') {
+		echo "<script type = 'text/javascript'>location.href='http://$_SERVER[HTTP_HOST]/common/onyen_validator.php'</script>";
+		exit();
+	}
 ?>
 
 <!DOCTYPE html>
@@ -19,27 +19,26 @@
 	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
 </head>
 <body>
-<?php
-	if(!checkValidationKey($con, $_POST['validation_key'], $_POST['pid'], 'admin', null)) {
-		echo "<script type='text/javascript'>location.href='".$validation_url."'</script>";
+<script>
+function confirmAlg()
+{
+var r=confirm("Are you sure you want to run the scheduling algorithm?");
+if(r==true)
+	{
+	goToAlgorithm();
 	}
+}
+</script>
+<?php
+	//the logout bar
+	echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
 
-
-	echo "<form method='POST' id='logout_form'>";
-		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
-
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-	echo "</form>";
-?>
-
-<form id='forward' method = 'POST'>
-
-<?php	
-
-	//if we get here, we've got a valid login. Echo the key and pid so that wherever we go we know who it is and if we're still valid
-	echo "<input type = 'hidden' name = 'pid' value = '".$_POST['pid']."'>\n";
-	echo "<input type = 'hidden' name = 'validation_key' value = '".$_POST['validation_key']."'>";
+	echo "<button type='button' onclick='goToSetHours()'>Set Writing Center Hours</button><br>";
+	echo "<button type='button' onclick='goToEditEmployees()'>Add/Edit/Remove Employees</button><br>";
+	echo "<button type='button' onclick='goToRequests()'>View All Requests</button><br>";
+	echo "<button type='button' onclick='goToShowPrefs()'>View All Preferences</button><br>";
+	echo "<button type='button' onclick='goToShowActual()'>View Master Schedule</button><br>";
+	echo "<button type='button' onclick='confirmAlg()'>Run Scheduling Algorithm</button<br>";
 	
 ?>
 
