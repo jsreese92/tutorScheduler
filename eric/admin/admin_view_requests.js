@@ -170,7 +170,16 @@ var switch_tutor = function(event) {
 		body.append(new_row);
 	}
 	
-	tutor_requests_div.append("<strong>Requests from: "+e.attr('data-fname')+" "+e.attr('data-lname')+"</strong>");
+	var type;
+	switch(e.attr('data-type').trim()) {
+		case 'ugrad':
+			type = 'Undergraduate';
+			break;
+		case 'grad':
+			type = 'Graduate';
+			break;
+	}
+	tutor_requests_div.append("<strong>Requests from: "+e.attr('data-fname')+" "+e.attr('data-lname')+": "+type+"</strong>");
 	tutor_requests_div.append(table);
 	
 	//now we'll fill out the current schedule table with their hours

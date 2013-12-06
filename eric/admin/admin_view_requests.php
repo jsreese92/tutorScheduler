@@ -29,7 +29,7 @@
 <?php
 	$result = mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `type` != 'admin' ORDER BY `Lname`, `Fname`");
 	while($next_tutor = mysqli_fetch_array($result)) {
-		echo "<span class='nav' data-pid='".$next_tutor['PID']."' data-fname='".$next_tutor['Fname']."' data-lname='".$next_tutor['Lname']."'>".$next_tutor['Lname'].", ".$next_tutor['Fname']."</span><br>\n";
+		echo "<span class='nav' data-pid='".$next_tutor['PID']."' data-fname='".$next_tutor['Fname']."' data-lname='".$next_tutor['Lname']."' data-type='".$next_tutor['type']."'>".$next_tutor['Lname'].", ".$next_tutor['Fname']."</span><br>\n";
 	}
 ?>	
 	</div>
