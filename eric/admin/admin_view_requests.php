@@ -1,4 +1,10 @@
 <?php
+/*
+	This page is the only AJAX page in the app. The other pages could be updated to use AJAX, but the nature of the interfaces means it's more or less irrelevant for them. This page, on
+	the other hand, needs it to function well. Every tutor has a table containing the information relevant to that tutor printed (hidden) to the page, and when a user clicks on a tutor
+	to load their information, it pulls from that database for the requests then fires off an ajax request for their current schedule. All updates are done through javascript and AJAX
+*/
+
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 

@@ -1,3 +1,7 @@
+/*
+	this script simply forwards the user when buttons are clicked
+*/
+
 
 var goToSetHours = function() {
 	window.location = './admin_set_hours.php';

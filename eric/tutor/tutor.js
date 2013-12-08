@@ -1,3 +1,7 @@
+/*
+	This script simply forwards users to the appropriate page when buttons are clicked
+*/
+
 
 var goToRequests = function() {
 	window.location = './tutor_requests.php';

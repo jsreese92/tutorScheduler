@@ -1,4 +1,8 @@
 $(document).ready(function() {
+/*
+	This is the only AJAX script in the app. When a user clicks on a tutor, it fires off a request to get their information and fills out everything when it returns.
+*/
+
 	
 	//create the table for viewing current schedule
 	var current_schedule_div = $('div#tutor_schedule');

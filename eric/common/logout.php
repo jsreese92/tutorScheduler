@@ -1,4 +1,8 @@
 <?php
+/*
+	This page is linked to whenever a user clicks logout. It expires their cookie and deletes the session before returning them to the login page.
+*/
+
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 

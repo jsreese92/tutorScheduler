@@ -1,4 +1,8 @@
 $(document).ready(function() {
+/*
+	This script updates the display, but no user interactio nis available here so nothing else needs to happen
+*/
+
 	//create the table for viewing current hours
 	var table = $("<table></table>");
 	var tbody = $("<tbody></tbody>");

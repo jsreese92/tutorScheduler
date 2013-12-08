@@ -1,4 +1,8 @@
 <?php
+/*
+	This script is called via AJAX and returns the comments for whatever tutor was indicated.
+*/
+
 include "./../common/session_validator.php";
 $con = getDatabaseConnection();
 

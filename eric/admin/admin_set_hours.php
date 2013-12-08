@@ -1,4 +1,10 @@
 <?php
+/*
+	This page is used to set the hours for which the center is open. It works by first checking if the value 'submit_checkbox' was sent to the server, and if so then it assumes you got here
+	by submitting new hours. It updates teh database accordingly then loads the page as normal. The current hours are loaded into a hidden table at the bottom of the page, and the associated
+	javascript file reads from it and changes the display so that the display matches the database each time the page is loaded.
+*/
+
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 

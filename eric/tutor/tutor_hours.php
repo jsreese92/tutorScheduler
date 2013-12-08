@@ -1,4 +1,9 @@
 <?php
+/*
+	This page simply displays the hours currently given by the database. It prints the current schedule and open hours in hidden tables and the javascript will be used to fill out the
+	display for the user. No user interaction can be done here.
+*/
+
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 

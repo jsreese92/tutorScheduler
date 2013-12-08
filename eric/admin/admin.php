@@ -1,4 +1,8 @@
 <?php
+/*
+	This page is the overview on which the user lands if they are an admin.  It simply contains buttons to the various tools available to admins.
+*/
+
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 

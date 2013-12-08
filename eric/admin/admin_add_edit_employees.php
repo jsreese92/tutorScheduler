@@ -1,4 +1,9 @@
 <?php
+/*
+	This page is used by the admins to change employees. It works by checking what variables were posted to the server and doing the appropriate action, ie if the user sent a new pid
+	then it creates a new user.  
+*/
+
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 	

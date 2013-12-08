@@ -1,4 +1,9 @@
 $(document).ready(function () {
+/*
+	This script validates whatever the user enters before allowing the php script to run, and adds the appropiate message (success or error) if the user just updated something
+*/
+
+
 	//fade the banner if we placed one in php
 	$('#success').delay(5000).fadeOut(1000);
 	$('#failure').delay(5000).fadeOut(1000);

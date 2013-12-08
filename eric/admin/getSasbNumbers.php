@@ -1,4 +1,9 @@
 <?php
+/*
+	This script is called via AJAX and returns the number of people currently working in SASB for each shift. It could and possibly should be combined with getGreenlawNumbers so that both
+	sets can be returned in a single AJAX request, but this was the first ajax I had ever worked with, so I wasn't really sure what I was doing. By the time I got better at it, we had run
+	out of time at the end of the semester and couldn't make the updates. The system as it stands works fine, but is a bit slower than it needs to be.
+*/
 include "./../common/session_validator.php";
 $con = getDatabaseConnection();
 

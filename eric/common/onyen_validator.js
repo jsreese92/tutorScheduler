@@ -1,3 +1,7 @@
+/*
+	This script simply forwards the user to wherever the PHP script of the same name has decided they should go
+*/
+
 $(document).ready(function() {
 	var target = $('#form_target').html();
 	var form = $('form');

@@ -1,4 +1,8 @@
 <?php
+/*
+	This script is called via AJAX and either returns the indicated tutor's schedule, or updates the tutor's schedule depending on whther it comes via POST or GET.
+*/
+
 include "./../common/session_validator.php";
 $con = getDatabaseConnection();
 

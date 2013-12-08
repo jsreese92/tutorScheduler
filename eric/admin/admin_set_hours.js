@@ -1,4 +1,8 @@
 $(document).ready(function () {
+/*
+	This script establishes the handler for each cell when clicked, and loops through the table to update the display on whether the center is open or not at that time.
+*/
+
 	$('#success').delay(10000).fadeOut(1000);
 	
 	//First, add a checkbox to each cell

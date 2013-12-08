@@ -1,4 +1,9 @@
 $(document).ready(function () {
+/*
+	THis script uses the hidden tables to fill out the visible table and to update the display to user interaction. It also validates that each cell has been selected before allowing
+	the requests to be submitted.
+*/
+
 	$('#success').delay(10000).fadeOut(1000);
 	
 	
