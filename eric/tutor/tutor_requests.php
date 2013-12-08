@@ -63,15 +63,6 @@
 ?>
 	<form id="request_form" action="tutor_requests.php" method="post">
 	
-	<p>To use this form, simply select the desired availability from the radio buttons below
-		and start clicking spots on the table to assign each time-block to the selected availability! To undo or deselect
-		a time-block, simply click it again until it turns white.  <strong>NOTE</strong> that you may want to leave blocks
-		for lunch/dinner as 'Prefer Not' or 'Can Work' sections</p>
-	<p>
-		While the scheduling software does its best to give everybody the optimum schedule, please note that there are times
-		at which point it will be <em>impossible</em> for us to keep everybody happy. The schedule you are about to submit
-		is a <strong>request,</strong> and in no way guarantees that your assigned shifts will perfectly reflect it.
-	</p>
 	<p>
 		<span class='busy'><input name='avail' value='busy' id='busy_radio' type='radio' checked><label for='busy_radio'>'Busy'</label></span> 
 			indicates that you absolutely CANNOT work during the shift that starts at the

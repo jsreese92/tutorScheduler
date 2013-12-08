@@ -133,7 +133,7 @@
 				</tr>
 <!-- 12:00PM HOUR BEGINS HERE -->
 				<tr id="12">
-					<td class="na"><strong>12:00AM</strong></td>
+					<td class="na"><strong>12:00PM</strong></td>
 					<td id="sun12"></td>
 					<td id="mon12"></td>
 					<td id="tue12"></td>

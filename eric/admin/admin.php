@@ -19,13 +19,28 @@
 	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
 </head>
 <body>
+<script>
+function confirmAlg()
+{
+var r=confirm("Are you sure you want to run the scheduling algorithm?");
+if(r==true)
+	{
+	goToAlgorithm();
+	}
+}
+</script>
 <?php
 	//the logout bar
 	echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
+	echo "<br><br><a class='login' href='admin_help.html'>Help</a>";
 
 	echo "<button type='button' onclick='goToSetHours()'>Set Writing Center Hours</button><br>";
 	echo "<button type='button' onclick='goToEditEmployees()'>Add/Edit/Remove Employees</button><br>";
-	echo "<button type='button' onclick='goToRequests()'>View All Requests</button>";
+	echo "<button type='button' onclick='goToRequests()'>Set Schedules</button><br>";
+	echo "<button type='button' onclick='goToShowPrefs()'>View All Preferences</button><br>";
+	echo "<button type='button' onclick='goToShowActual()'>View Master Schedule</button><br>";
+	echo "<button type='button' onclick='confirmAlg()'>Run Scheduling Algorithm</button<br>";
+	
 ?>
 
 

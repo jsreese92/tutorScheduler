@@ -120,3 +120,7 @@ span.sasb {
 span.greenlaw {
 	color: green;
 }
+
+img {
+	border: thin solid black;
+}

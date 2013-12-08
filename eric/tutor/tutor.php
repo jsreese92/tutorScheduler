@@ -23,6 +23,7 @@
 <?php
 	//the logout bar
 	echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
+	echo "<br><br><a class='login' href='tutor_help.html'>Help</a>";
 	
 	echo "<button type='button' onclick='goToRequests()'>Set Available Hours</button><br>";
 	echo "<button type='button' onclick='goToHours()'>View Assigned Hours</button>";	
