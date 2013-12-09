@@ -15,6 +15,13 @@
 </body>
 </html>
 <?php
+/*This file is used to show every tutor's preference for every hour of the week
+ *3's represent perfects
+ *2's represent okays
+ *1's represent not ideal but can still work
+ *if the tutor had put busy for an hour they won't show on this page
+ */
+
 //Create connection
 include "./session_validator.php";
 $con = getDatabaseConnection();
@@ -37,7 +44,8 @@ if (!mysqli_query($con,$sql)){
 /*********VARIABLES FOR RESTRICTING DISPLAY FROM CUSTOM HOURS*********/
 
 $days = array(sun,mon,tue,wed,thu,fri,sat); // needed for the openHours table
-$hours = array(h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23);
+$hours = array(h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23); //needed for column names in database
+//variables used to determine if an hour for a given day is open
 $sunh07Open=0; $monh07Open=0; $tueh07Open=0; $wedh07Open=0; $thuh07Open=0; $frih07Open=0; $sath07Open=0;
 $sunh08Open=0; $monh08Open=0; $tueh08Open=0; $wedh08Open=0; $thuh08Open=0; $frih08Open=0; $sath08Open=0;
 $sunh09Open=0; $monh09Open=0; $tueh09Open=0; $wedh09Open=0; $thuh09Open=0; $frih09Open=0; $sath09Open=0;
@@ -147,8 +155,8 @@ mysqli_close($con);
 <head>
 	<meta charset="UTF-8">
 	<title>Student Preferences</title>
-	<!--<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">-->
 </head>
+<!--A table listing all of the tutors and their preferences in a cell representing an hour of a day-->
 <body>
 	<table align="center" border>
 		<thead>

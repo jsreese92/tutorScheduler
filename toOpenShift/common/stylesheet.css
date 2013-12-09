@@ -1,4 +1,3 @@
-@CHARSET "ISO-8859-1";
 
 table {
 	margin: 0 auto;
@@ -74,7 +73,7 @@ table tbody td.na {
 }
 
 .invalid {
-	border; solid;
+	border: solid;
 	border-color: red;
 	border-width: 3px;
 }
@@ -88,9 +87,40 @@ table tbody td.na {
 }
 
 .class_1 {
-	background-color: blue;
+	background-color: #9EA1FF;
 }
 
 .class_2 {
-	background-color: green;
+	background-color: #97D984;
+}
+
+#tutor_select, #tutor_container, #tutor_requests, #tutor_schedule {
+	float: left;
+	border: thin solid black;
+}
+#tutor_select {
+	width: 150px;
+}
+#tutor_comments {
+	padding: 5px;
+	width: 1120px;
+}
+
+span.nav:hover {
+	background: #97D984;
+}
+
+span.selected_span {
+	background: #97D984;
+}
+
+span.sasb {
+	color: blue;
+}
+span.greenlaw {
+	color: green;
+}
+
+img {
+	border: thin solid black;
 }

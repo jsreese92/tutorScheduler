@@ -1,28 +1,17 @@
-$(document).ready(function() {
-	var form = $('#forward');
-
-	form.append("<button type='button' onclick='goToRequests()'>Set Available Hours</button><br>");
-	form.append("<button type='button' onclick='goToHours()'>View Assigned Hours</button>");
-});
+/*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	This script simply forwards users to the appropriate page when buttons are clicked
+*/
 
 var goToRequests = function() {
-	var form = $('#forward');
-	var actual_url = $(location).attr('href');
-	
-	form.attr('action', actual_url.replace('tutor.php', 'tutor_requests.php'));
-	form.trigger('submit');
+	window.location = './tutor_requests.php';
 };
 
 var goToHours = function() {
-	var form = $('#forward');
-	var actual_url = $(location).attr('href');
-	
-	form.attr('action', actual_url.replace('tutor.php', 'tutor_hours.php'));
-	form.trigger('submit');
+	window.location = './tutor_hours.php';
 };
 
 var logout = function() {
-	var form = $('#logout_form');
-	form.attr('action', './../common/logout.php');
-	form.trigger('submit');
+	window.location = './../common/logout.php';
 };

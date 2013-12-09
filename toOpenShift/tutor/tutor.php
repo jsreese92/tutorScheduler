@@ -1,12 +1,19 @@
 <?php
-	include "./../common/database_validator.php";
+/*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	This page is simply the overview page for tutors on which users land when they login properly. It contains links to the various tools available to tutors.
+*/
+
+	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 
-
-	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$validation_url = str_replace("tutor/tutor.php", "common/validator.php", $actual_url);
-
-	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `pid` = '".$_POST['pid']."'"));
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
+	
+	if($employee_info[3] == 'admin') {
+		echo "<script type = 'text/javascript'>location.href='http://$_SERVER[HTTP_HOST]/common/onyen_validator.php'</script>";
+		exit();
+	}
 
 ?>
 
@@ -20,27 +27,12 @@
 </head>
 <body>
 <?php
-	if(!checkValidationKey($con, $_POST['validation_key'], $_POST['pid'], 'ugrad', 'grad')) {
-		echo "<script type='text/javascript'>location.href='".$validation_url."'</script>";
-	}
-
-
-	echo "<form method='POST' id='logout_form'>";
-		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
-
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-	echo "</form>";
-?>
-
-<form id='forward' method = 'POST'>
-
-<?php
-
-	//if we get here, we've got a valid login. Echo the key and pid so that wherever we go we know who it is and if we're still valid
-	echo "<input type = 'hidden' name = 'pid' value = '".$_POST['pid']."'>\n";
-	echo "<input type = 'hidden' name = 'validation_key' value = '".$_POST['validation_key']."'>";
+	//the logout bar
+	echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
+	echo "<br><br><a class='login' target='blank' href='tutor_help.html'>Help</a>";
 	
+	echo "<button type='button' onclick='goToRequests()'>Set Available Hours</button><br>";
+	echo "<button type='button' onclick='goToHours()'>View Assigned Hours</button>";	
 ?>
 
 

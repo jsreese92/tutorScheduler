@@ -1,3 +1,9 @@
+/*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	THis script uses the hidden tables to fill out the visible table and to update the display to user interaction. It also validates that each cell has been selected before allowing
+	the requests to be submitted.
+*/
 $(document).ready(function () {
 	$('#success').delay(10000).fadeOut(1000);
 	
@@ -6,7 +12,7 @@ $(document).ready(function () {
 	$("table#requests_table td").not(".na").each(function(i, e) {
 		td = $(e);
 		var name = td.attr("id");
-		var dropdown = $("<select>");
+		var dropdown = $("<select></select>");
 		dropdown.attr("name",name+"_val");
 		dropdown.append("<option value='0'>Busy</option>" +
 				"<option value='1'>Prefer Not</option>" +
@@ -60,7 +66,7 @@ $(document).ready(function () {
 
 var clicked = function(event) {
 	var cell = $(this);
-	var availability = $('select#avail').val();
+	var availability = $("input[name='avail']:checked").val();
 	var avail_num = null;
 	
 	//Change the class(and hence the color) of the cell based on the availability the user has selected. We'll also
@@ -90,15 +96,11 @@ var clicked = function(event) {
 };
 
 var goBack = function() {
-	var form = $('#logout_form');
-	form.attr('action', './tutor.php');
-	form.trigger('submit');
+	window.location = './tutor.php';
 };
 
 var logout = function() {
-	var form = $('#logout_form');
-	form.attr('action', './../common/logout.php');
-	form.trigger('submit');
+	window.location = './../common/logout.php';
 };
 
 var submit_requests = function() {
@@ -125,15 +127,6 @@ var reset_requests = function() {
 			fill_table($(e));
 		});		
 	}	
-};
-
-var fill_all = function() {
-	$("table#requests_table td").not(".na").each(function(i, td) {
-		var e = $(td);
-		e.removeClass();
-		e.addClass('perfect');
-		e.children('select').val(3);
-	});
 };
 
 //fill_table takes in a jqueryified cell and checks the database_table to fill out the users view

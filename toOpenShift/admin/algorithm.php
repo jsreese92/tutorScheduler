@@ -1,15 +1,15 @@
 <?php
+// This program schedules tutors for the UNC Writing Center based on 
+// provided preferences. All the work is done by functions called at the
+// bottom of this file. Any further constraints to be developed in the future
+// may be appended via writing functions and then calling them at the 
+// appropriate location. More likely than not, this will happen before the
+// moveToGl() function, since the schedule's constraints are ensured to be
+// acceptable on sasbSchedule, and then tutors are moved to Greenlaw if 
+// available. This program was written by Jordan Reese.
+
 // Create connection
 include "./../common/session_validator.php";
-
-$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
-	
-if($employee_info[3] != 'admin') {
-	header('HTTP/1.1 401 Unauthorized');
-	exit();
-}
-
-
 $con = getDatabaseConnection();
 
 // Check connection
@@ -21,13 +21,13 @@ if (mysqli_connect_errno($con)){
 $sasbSchedule = initializeTupleArray();
 $glSchedule = initializeTupleArray();
 $pidArray = getPids();
-$tutorInfo = getTutorInfo();
-$preferences = initializeTupleArray();
+$tutorInfo = getTutorInfo(); // contains names and type (ugrad, grad)
+$preferences = initializeTupleArray(); // populated via loadPref() function
 $days = array(sun,mon,tue,wed,thu,fri,sat);
 $hours = array(h00,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23);
-$hoursWorking = initializeHoursWorking();
-$hoursWorkingPerDay = initializeHoursWorkingPerDay();
-$openHours = getOpenHours();
+$hoursWorking = initializeHoursWorking(); // key is PID, value is number of hours working
+$hoursWorkingPerDay = initializeHoursWorkingPerDay(); // hours working per day by tutor
+$openHours = getOpenHours(); // obtained from actual writing center schedule
 $GRAD_HOURS = 14;
 $UGRAD_HOURS = 5;
 
@@ -103,11 +103,13 @@ function initializeDay($theDay){
   return ${$theDay};
 }
 
+// initializes every hour in a day for 0 as number of tutors currently scheduled
 function initializeDayByHours($theDay){
   ${$theDay} = initializeHoursInDay();
   return ${$theDay};
 }
 
+// initializes each hour in a day as number of tutors currently scheduled
 function initializeHoursInDay(){
   $day = array(
     "h00" => 0,
@@ -138,6 +140,8 @@ function initializeHoursInDay(){
   return $day;
 }
 
+// initializes an array of tuples for each day, for each hour. Mehtod by
+// which every schedule is stored, as well as the preferences.
 function initializeHours(){
   $day = array(
     "h00" => array(
@@ -216,6 +220,7 @@ function initializeHours(){
   return $day; // array of hours
 }
 
+// used to initialize tuple arrays for each day
 function initializeTupleArray(){
   $arr = array(
     "sun" => initializeDay("sun"),
@@ -229,6 +234,7 @@ function initializeTupleArray(){
   return $arr;
 }
 
+// initializes array to store num tutors working each day
 function initializeNumWorking(){
   $arr = array(
     "sun" => initializeDayByHours("sun"),
@@ -268,8 +274,8 @@ class tuple {
   }
 }
 
-// populate array of tuples via a wildly ineffecient querying scheme
-function loadPref(){ // returns preferences tuple array
+// loads prefernces into preferences tuple array
+function loadPref(){ 
   global $con;
   global $days;
   global $hours;
@@ -299,6 +305,7 @@ function loadPref(){ // returns preferences tuple array
   }
 }
 
+// returns array of PIDs obtained from employeeInfo
 function getPids(){
   global $con;
   $arr = array();
@@ -312,10 +319,14 @@ function getPids(){
   return $arr;
 }
 
+// removes a tuple from given "tuple array," which are initialized via the
+// initializeTupleArray() function.
 function removeTuple(&$theArray, $theDay, $theHour, $thePid){
   unset($theArray[$theDay][$theHour]["tuples"][$thePid]);
 }
 
+// adds a tuple from given "tuple array," which are initialized via the
+// initializeTupleArray() function.
 function addTuple(&$theArray, $theDay, $theHour, $thePid, $thePref, $theType){
   $temp= new tuple;
   $temp->setPid($thePid);
@@ -329,6 +340,7 @@ function numTuples(&$theArray, $theDay, $theHour){
   return sizeof($theArray[$theDay][$theHour]["tuples"]);
 }
 
+// returns number of people scheduled given a certain schedule
 function getNumWorkingArr(&$theSchedule){
   global $days;
   global $hours;
@@ -427,6 +439,8 @@ function batchScheduling(&$theSchedule, $theType){
   }
 }
 
+// used by batchScheudling function, schedules all of a particular 
+// preference for every tutor for every hour
 function scheduleByPref(&$theSchedule, $requiredPref, $thePid){
   global $days;
   global $hours;
@@ -500,42 +514,6 @@ function ensureGradGe14(&$theSchedule){
     }
   }
 }
-
-// Same as above, this should be obsolete thanks to batchSchedule
-/*
-function ensureUgradLe10(&$theSchedule){
-  global $days;
-  global $hours;
-  global $openHours;
-  global $pidArray;
-  global $preferences;
-  global $tutorInfo;
-  global $hoursWorking;
-  global $hoursWorkingPerDay;
-  foreach($pidArray as $thePid){
-    // intially skip over if tutor does not need to be scheduled
-    if(($tutorInfo[$thePid]["type"] == "ugrad") and (intval($hoursWorking[$thePid]) < 10)){
-      foreach($days as $theDay){
-        foreach($hours as $theHour){
-          // as long as this day is open and the ugrad is between 6 and 10 hrs
-          if(($openHours[$theDay][$theHour] == 1) and ($hoursWorking[$thePid] < 10)){
-            $temp = new tuple;
-            $temp = $preferences[$theDay][$theHour]["tuples"][$thePid];
-            if($temp != NULL){
-              $thePref = $temp->getPref();
-              $theType = $temp->getTheType();
-              addTuple($theSchedule,$theDay,$theHour,$thePid,$thePref,$theType);
-              removeTuple($preferences,$theDay,$theHour,$thePid);
-              $hoursWorking[$thePid] = $hoursWorking[$thePid] + 1;
-              $hoursWorkingPerDay[$thePid][$theDay] = $hoursWorkingPerDay[$thePid][$theDay] + 1 ;
-            }
-          }
-        }
-      }
-    }
-  }
-}
- */
 
 // Removes tuples from given schedule if a tutor is working more than five 
 // hours in a shift. Places tuple back in preferences array since that tutor 
@@ -639,6 +617,9 @@ function gradDaysOffHelper($thePid, $theDay, &$retHour, &$retDay, &$retPref, &$r
   }
 }
 
+// ensures that no graduate tutor has more than two days off. If this is
+// found to be the case, an hour is scheduled for them such that this is 
+// no longer the case.
 function ensureGradDaysOff(&$theSchedule){
   global $days;
   global $hours;
@@ -654,23 +635,11 @@ function ensureGradDaysOff(&$theSchedule){
   // no more than 2 days off
   foreach($pidArray as $thePid){
     if($tutorInfo[$thePid]["type"] == "grad"){
-      //TODO handle weekend wraparound cases
-
       // If there are more than two days off from Sunday to Friday:
       for($i=0; $i<4; $i++){ // stops checking at Wednesday since not handling wraparound
         if($daysWorkingArr[$thePid][$i] == 0){ // not working that day
           // check next two days
           if(($daysWorkingArr[$thePid][$i+1] == 0) && ($daysWorkingArr[$thePid][$i+2] == 0)){
-
-            // prints out span and name of grad who isn't scheduled 2 days in a row
-            /*
-            $firstDay = numToDay($i);
-            $lastDay = numToDay($i+2);
-            $fname = $tutorInfo[$thePid]["Fname"];
-            $lname = $tutorInfo[$thePid]["Lname"];
-            echo"$fname, $lname, $firstDay, $lastDay <br>";
-             */
-
             // try to schedule 3rd day, if unable, schedule 2nd, etc.
             $dayToSchedule = numToDay($i+2); //selects 3rd day
             $found = false; // true if tuple to schedule is found
@@ -772,7 +741,6 @@ function populateActSchedule(){
   // delete all previously existing rows
   $sql="delete from actSchedule";
   if(mysqli_query($con,$sql)){
-    //echo "Deleted all rows from actSchedule table <br>";
   }
 
   // initialize rows for every tutor
@@ -783,7 +751,6 @@ function populateActSchedule(){
         $sql="insert into actSchedule (PID,day,h00,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23) 
           values('$thePid','$theDay',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)";
         if(mysqli_query($con,$sql)){
-          //echo"initialized row";
         }
       }
     }
@@ -802,7 +769,6 @@ function populateActSchedule(){
               $sql="update actSchedule set $theHour=1
                 where PID='$thePid' and day='$theDay'";
               if(mysqli_query($con,$sql)){
-                //echo"updated row";
               }
               else{
                 echo "Error: " . mysqli_error($con) . "<br>";
@@ -814,7 +780,6 @@ function populateActSchedule(){
     }
   }
 
-  // TODO factor these out into functions
   foreach($days as $theDay){
     foreach($hours as $theHour){
       // only bother scheduling if the writing centers are open
@@ -827,7 +792,6 @@ function populateActSchedule(){
               $sql="update actSchedule set $theHour=2
                 where PID='$thePid' and day='$theDay'";
               if(mysqli_query($con,$sql)){
-                //echo"updated row";
               }
               else{
                 echo "Error: " . mysqli_error($con) . "<br>";
@@ -838,18 +802,6 @@ function populateActSchedule(){
       }
     }
   }
-
-  /*
-  echo"<pre>";
-  echo"gl<br>";
-  var_dump($glSchedule);
-  echo"</pre>";
-
-  echo"<pre>";
-  echo"sasb<br>";
-  var_dump($sasbSchedule);
-  echo"</pre>";
-   */
 }
 
 // returns assoc array size 2 with "day" and "hour" such that they have
@@ -875,14 +827,11 @@ function getTutorMaxDay(&$theSchedule, $theNumWorkingArr, $thePid){
       }
     }
   }
-  /*
-  echo"<pre>";
-  var_dump($arr);
-  echo"</pre>";
-   */
   return $arr;
 }
 
+// returns true if a given tutor is scheduled to work at a given time in a 
+// given schedule
 function containsTutor(&$theSchedule, $theDay, $theHour,$thePid){
   $tuples = $theSchedule[$theDay][$theHour]["tuples"];
   foreach($tuples as $theTuple){
@@ -894,6 +843,8 @@ function containsTutor(&$theSchedule, $theDay, $theHour,$thePid){
   return false;
 }
 
+// This function ensures that tutors are scheduled for their appropriate
+// number of hours based on type (GRAD_HOURS and UGRAD_HOURS respectively)
 function ensureMaxHours(&$theSchedule){
   global $days, $hours, $pidArray, $tutorInfo, $GRAD_HOURS, $UGRAD_HOURS,
     $hoursWorking;
@@ -916,9 +867,6 @@ function ensureMaxHours(&$theSchedule){
         $maxHour = $maxArr["hour"];
 
         $currentTuple = $theSchedule[$maxDay][$maxHour]["tuples"][$thePid];
-        echo"<pre>";
-       // var_dump($currentTuple);
-        echo"</pre>";
         $thePref = $currentTuple->getPref();
 
         addTuple($preferences,$maxDay,$maxHour,$thePid,$thePref,$theType);
@@ -931,6 +879,9 @@ function ensureMaxHours(&$theSchedule){
   }
 }
 
+// This function takes the first schedule (sasbSchedule) and moves two tutors
+// to GL if there are four or more currently scheduled in SASB, at least one
+// of which is a graduate tutor.
 function moveToGl(&$theSchedule){
   global $days, $hours, $glSchedule; 
 
@@ -951,7 +902,6 @@ function moveToGl(&$theSchedule){
               // schedule this person and set gradScheduled to true
               addTuple($glSchedule,$theDay,$theHour,$thePid,$thePref,$theType);
               removeTuple($theSchedule,$theDay,$theHour,$thePid);
-              //echo"first added: $theDay $theHour: $thePid $thePref $theType, ";
 
               $newTuples = $theSchedule[$theDay][$theHour]["tuples"];
               foreach($newTuples as $newTuple){
@@ -959,7 +909,6 @@ function moveToGl(&$theSchedule){
                   $newPid = $newTuple->getPid();
                   $newPref = $theTuple->getPref();
                   $newType = $theTuple->getTheType();
-                  //echo"second added: $newPid, $newPref, $newType<br>";
                   addTuple($glSchedule,$theDay,$theHour,$newPid,$newPref,$newType);
                   removeTuple($theSchedule,$theDay,$theHour,$newPid);
                   $twoScheduled = true;
@@ -997,40 +946,6 @@ ensureMaxHours($sasbSchedule);
 // 7. Move people to GL
 moveToGl($sasbSchedule);
 
-// 10. Populate actSchedule
+// 8. Populate actSchedule
 populateActSchedule();
-
-// prints everybody's PID, name, and current hours scheduled
-/*
-echo"<pre>";
-foreach($pidArray as $thePid){
-  $fname = $tutorInfo[$thePid]["Fname"];
-  $lname = $tutorInfo[$thePid]["Lname"];
-  $type = $tutorInfo[$thePid]["type"];
-  echo"$thePid, $fname, $lname, $type, $hoursWorking[$thePid]\n";
-}
-echo"</pre>";
- */
 ?>
-
-<!DOCTYPE html>
-<html>
-	<link rel="stylesheet" type="text/css" href="./../common/stylesheet.css">
-	<script type="text/javascript" src="./../common/jquery-1.10.2.min.js"></script>
-	<!--script type="text/javascript" src="./algorithm.js"></script-->
-	<meta charset="UTF-8">
-	
-<script>
-function goBack(){
-	window.location = './admin.php';
-};
-function logout(){
-	window.location = './../common/logout.php';
-};
-</script>
-<body>
-<h1>Algorithm has finished</h1>
-<button type='button' onclick='goBack()'>Back to Administrator Overview Page</button><br>
-<button type='button' onclick='logout()'>Logout</button>
-</body>
-</html>

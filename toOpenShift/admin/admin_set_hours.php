@@ -1,14 +1,20 @@
 <?php
-	include "./../common/database_validator.php";
+/*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	This page is used to set the hours for which the center is open. It works by first checking if the value 'submit_checkbox' was sent to the server, and if so then it assumes you got here
+	by submitting new hours. It updates teh database accordingly then loads the page as normal. The current hours are loaded into a hidden table at the bottom of the page, and the associated
+	javascript file reads from it and changes the display so that the display matches the database each time the page is loaded.
+*/
+	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
 
-	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$validation_url = str_replace("admin/admin_set_hours.php", "common/validator.php", $actual_url);
-	$tutor_url = str_replace("admin/admin_set_hours.php", "admin/admin.php", $actual_url);
-
-	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
-
+	if($employee_info[3] != 'admin') {
+		echo "<script type = 'text/javascript'>location.href='http://$_SERVER[HTTP_HOST]/common/onyen_validator.php'</script>";
+		exit();
+	}
 ?>
 
 <!DOCTYPE html>
@@ -24,13 +30,10 @@
 
 
 <?php
-	if(!checkValidationKey($con, $_POST['validation_key'], $_POST['pid'], 'admin', null)) {
-		echo "<script type='text/javascript'>location.href='".$validation_url."'</script>";
-	}
-
 
 //IF WE GOT TO THE PAGE VIA THE SUBMIT BUTTON, UPDATE THE DATABASE!
 	if($_POST['submit_checkbox']==true) {
+		$success = true;
 
 		function getClass($val) {
 			if($_POST[$val]) {
@@ -46,37 +49,26 @@
 			$day = $day_array[$d];
 			for($i=7; $i<=23; $i++) {
 				if($i < 10) {
-					mysqli_query($con, "UPDATE `openHours` SET `h0".$i."` = ".getClass($day.'0'.$i.'_val')." WHERE `day`='".$day."'");
+					mysqli_query($con, "UPDATE `openHours` SET `h0".$i."` = ".getClass($day.'0'.$i.'_val')." WHERE `day`='".mysqli_real_escape_string($con, $day)."'");
+					if(mysqli_error($con)) $success = false;
 				}else {
-					 mysqli_query($con, "UPDATE `openHours` SET `h".$i."` = ".getClass($day.$i.'_val')." WHERE `day`='".$day."'");
+					mysqli_query($con, "UPDATE `openHours` SET `h".$i."` = ".getClass($day.$i.'_val')." WHERE `day`='".mysqli_real_escape_string($con, $day)."'");
+					if(mysqli_error($con)) $success = false;
 				}
 			}
 		}
-		echo "<div id=success>Successfully Submitted Hours!</div>";
+		if($success) {
+			echo "<div id=success>Successfully Submitted Hours!</div>";
+		}else echo "<div id=failure>Failed to Submit Hours! There was a query error.</div>";
 	}
 
-
-	echo "<form method='POST' id='logout_form'>";
-		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
-
-		echo "<button type='button' onclick='goBack()'>Back to Administrator Overview Page</button>";
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-	echo "</form>";
-
+	//the go back/logout bar
+	echo "<div><strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>" .
+		"<button onclick='goBack()'>Back to Administrator Overview Page</button></div>";
 
 ?>
 
 	<form id="set_hours_form" action="admin_set_hours.php" method="POST">
-		<?php
-			//echo the hidden fields for submission (validation key, pid)
-			echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-			echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-			
-			
-		?>
-
-
 		<div id="admin_div">
 		<table id="admin_table">
 			<thead>
@@ -148,7 +140,7 @@
 				</tr>
 <!-- 12:00PM HOUR BEGINS HERE -->
 				<tr id="12">
-					<td class="na"><strong>12:00AM</strong></td>
+					<td class="na"><strong>12:00PM</strong></td>
 					<td id="sun12"></td>
 					<td id="mon12"></td>
 					<td id="tue12"></td>

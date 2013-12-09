@@ -1,13 +1,20 @@
 <?php
-	include "./../common/database_validator.php";
+/*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	This script checks what was posted and if the user just submitted new hours, it updates the database with the new requests and prints the appropriate message. When the page loads it
+	prints a table of the tutor's current requests and the center's hours which the javascript will use to fill out the visible table accordingly.
+*/
+
+	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 
-	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$validation_url = str_replace("tutor/tutor_requests.php", "common/validator.php", $actual_url);
-	$tutor_url = str_replace("tutor/tutor_requests.php", "tutor/tutor.php", $actual_url);
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
 
-	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
-
+	if($employee_info[3] == 'admin') {
+		echo "<script type = 'text/javascript'>location.href='http://$_SERVER[HTTP_HOST]/common/onyen_validator.php'</script>";
+		exit();
+	}	
 ?>	
 
 <!DOCTYPE html>
@@ -24,84 +31,64 @@
 
 <?php
 
-	if(!checkValidationKey($con, $_POST['validation_key'], $_POST['pid'], 'ugrad', 'grad')) {
-		echo "<script type='text/javascript'>location.href='".$validation_url."'</script>";
-	}
-
-
-
 //IF WE GOT TO THE PAGE VIA THE SUBMIT BUTTON, UPDATE THE DATABASE!
 	if($_POST['submit_checkbox']==true) {
+		$success = true;
 		
 		function getVal($val) {
 			return $_POST[$val];
 		}
-
+		
 		$day_array = array("sun", "mon", "tue", "wed", "thu", "fri", "sat");
-	
+		
 		for($d=0; $d<7; $d++) {
 			$day = $day_array[$d];
 			for($h=7; $h<=23; $h++) {
 				if($h<10) {
 					mysqli_query($con, "UPDATE `hoursByDay` SET `h0".$h."`='".getVal($day.'0'.$h.'_val')."'"."where `PID` = '".$employee_info[0]."' and `day`='".$day."'");
+					if(mysqli_error($con)) $success = false;
 				}else {
 					mysqli_query($con, "UPDATE `hoursByDay` SET `h".$h."`='".getVal($day.$h.'_val')."'"."where `PID` = '".$employee_info[0]."' and `day`='".$day."'");
+					if(mysqli_error($con)) $success = false;
 				}
-				
 			}
 		}
-		echo "<div id=success>Successfully Submitted Requests!</div>";
+		if(trim($_POST['comments']) == '') {
+			$comments = 'none.';
+		}else $comments = mysqli_real_escape_string($con, trim($_POST['comments']));
+		
+		mysqli_query($con, "UPDATE `tutorComments` SET `comments`='".$comments."' WHERE `PID` = '".$employee_info[0]."'");
+		if(mysqli_error($con)) $success = false;
+		if($success) {
+			echo "<div id=success>Successfully Submitted Requests!</div>";
+		}else echo "<div id=failure>Failed to Submit Requests: The Database could not be written to!</div>";
 	}
 
-	echo "<form method='POST' id='logout_form'>";
-		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
-
-		echo "<button type='button' onclick='goBack()'>Back to Tutor Overview Page</button>";
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-	echo "</form>";
+	//the go back/logout bar
+	echo "<div><strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>" .
+		"<button onclick='goBack()'>Back to Tutor Overview Page</button></div>";
 ?>
+	<form id="request_form" action="tutor_requests.php" method="post">
 	
-	<p>To use this form, simply select the desired availability in the dropdown in the upper-left corner of the table,
-		and start clicking spots on the table to assign each time-block to the selected availability! To undo or deselect
-		a time-block, simply click it again until it turns white.  <strong>NOTE</strong> that you may want to leave blocks
-		for lunch/dinner as 'Prefer Not' or 'Can Work' sections</p>
 	<p>
-		<span class='busy'>'Busy'</span> indicates that you absolutely CANNOT work during the shift that starts at the
+		<span class='busy'><input name='avail' value='busy' id='busy_radio' type='radio' checked><label for='busy_radio'>'Busy'</label></span> 
+			indicates that you absolutely CANNOT work during the shift that starts at the
 			hour listed. Use this option for things like classes, other jobs, etc. Cells marked 'Busy' will be black. <br>
-		<span class='prefer_no'>'Prefer Not'</span> indicates that you <em>could</em> work at this time, but would
+		<span class='prefer_no'><input name='avail' value='prefer_no' id='prefer_no_radio' type='radio'><label for='prefer_no_radio'>'Prefer Not'</label></span> 
+			indicates that you <em>could</em> work at this time, but would
 			<em>strongly prefer</em> to not have to work if it can be avoided. These cells will be red.<br>
-		<span class='can'>'Can Work'</span> indicates that you can easily work this time and be ok, but it isn't the
+		<span class='can'><input name='avail' value='can' id='can_radio' type='radio'><label for='can_radio'>'Can Work'</label></span> 
+			indicates that you can easily work this time and be ok, but it isn't the
 			<em>ideal</em> time for you. These cell will be highlighted yellow.<br>
-		<span class='perfect'>'Perfect'</span> indicates that this is the <em>perfect</em> time slot for you to work, and
+		<span class='perfect'><input name='avail' value='perfect' id='perfect_radio' type='radio'><label for='perfect_radio'>'Perfect'</label></span> 
+			indicates that this is the <em>perfect</em> time slot for you to work, and
 			you would be happy having a shift at this time. These cells will be displayed in green.
 	</p>
-	<p>
-		While the scheduling software does its best to give everybody the optimum schedule, please note that there are times
-		at which point it will be <em>impossible</em> for us to keep everybody happy. The schedule you are about to submit
-		is a <strong>request,</strong> and in no way guarantees that your assigned shifts will perfectly reflect it.
-	</p>
 	
-	<form id="request_form" action="tutor_requests.php" method="post">
-		<?php
-			//echo the hidden fields for submission (validation key, pid)
-			echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-			echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-			
-			
-		?>
-
 		<div id="request_div">
 		<table id="requests_table">
 			<thead>
-				<tr><th>
-						<select id="avail">
-							<option value="busy">Busy</option>
-							<option value="prefer_no">Prefer Not</option>
-							<option value="can">Can Work</option>
-							<option value="perfect">Perfect</option>
-						</select>
-					</th>
+				<tr><th></th>
 					<th class="na">Sunday</th>
 					<th class="na">Monday</th>
 					<th class="na">Tuesday</th>
@@ -303,10 +290,15 @@
 		</div>
 
 		<br>
+		Type any comments you want the admins to see below:<br>
+		<?php 
+			$comments_value = mysqli_fetch_array(mysqli_query($con, "SELECT `comments` FROM `tutorComments` WHERE `PID` = '".$employee_info[0]."'"));
+		?>
+		<textarea name='comments' rows='5' cols='100' maxlength='2000'><?php echo $comments_value[0]; ?></textarea>
+		<br>
 		<button id="submit" type="submit" onclick="submit_requests()">Submit</button>
 		<button id="clear" type="button" onclick="clear_requests()">Clear All</button>
 		<button id="reset" type="button" onclick="reset_requests()">Reset</button>
-		<button type="button" onclick="fill_all()">Fill</button>
 		
 	</form>
 

@@ -1,14 +1,20 @@
 <?php
+/*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	This page simply displays the hours currently given by the database. It prints the current schedule and open hours in hidden tables and the javascript will be used to fill out the
+	display for the user. No user interaction can be done here.
+*/
 
-	include "./../common/database_validator.php";
+	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 
-	$actual_url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$validation_url = str_replace("tutor/tutor_hours.php", "common/validator.php", $actual_url);
-	$tutor_url = str_replace("tutor/tutor_requests.php", "tutor/tutor.php", $actual_url);
-
-	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".$_POST['pid']."'"));
-
+	$employee_info = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM `employeeInfo` WHERE `PID` = '".mysqli_real_escape_string($con, $_SESSION['pid'])."'"));
+	
+	if($employee_info[3] == 'admin') {
+		echo "<script type = 'text/javascript'>location.href='http://$_SERVER[HTTP_HOST]/common/onyen_validator.php'</script>";
+		exit();
+	}
 ?>
 
 <!DOCTYPE html>
@@ -24,20 +30,9 @@
 
 
 <?php
-
-	if(!checkValidationKey($con, $_POST['validation_key'], $_POST['pid'], 'ugrad', 'grad')) {
-		echo "<script type='text/javascript'>location.href='".$validation_url."'</script>";
-	}
-
-
-	echo "<form method='POST' id='logout_form'>";
-		echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
-
-		echo "<button type='button' onclick='goBack()'>Back to Tutor Overview Page</button>";
-		echo "<input type='hidden' name = 'pid' value='".$_POST['pid']."'>\n";
-		echo "<input type='hidden' name = 'validation_key' value='".$_POST['validation_key']."'>";
-	echo "</form>";
-
+	//the go back/logout bar
+	echo "<div><strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>" .
+		"<button onclick='goBack()'>Back to Tutor Overview Page</button></div>";
 ?>
 	
 	<div id="view_schedule_div">

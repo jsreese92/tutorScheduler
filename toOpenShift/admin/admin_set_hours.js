@@ -1,3 +1,8 @@
+/*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	This script establishes the handler for each cell when clicked, and loops through the table to update the display on whether the center is open or not at that time.
+*/
 $(document).ready(function () {
 	$('#success').delay(10000).fadeOut(1000);
 	
@@ -38,15 +43,11 @@ var clicked = function(event) {
 };
 
 var goBack = function() {
-	var form = $('#logout_form');
-	form.attr('action', './admin.php');
-	form.trigger('submit');
+	window.location = './admin.php';
 };
 
 var logout = function() {
-	var form = $('#logout_form');
-	form.attr('action', './../common/logout.php');
-	form.trigger('submit');
+	window.location = './../common/logout.php';
 };
 
 var clear_admin = function() {

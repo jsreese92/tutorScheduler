@@ -1,3 +1,8 @@
+/*
+	WRITTEN BY: Eric JOnes
+	Last Edited: 12/8/2013
+	This script updates the display, but no user interactio nis available here so nothing else needs to happen
+*/
 $(document).ready(function() {
 	//create the table for viewing current hours
 	var table = $("<table></table>");
@@ -47,15 +52,10 @@ $(document).ready(function() {
 	$("#view_schedule_div").append(table);
 });
 
-
 var goBack = function() {
-	var form = $('#logout_form');
-	form.attr('action', './tutor.php');
-	form.trigger('submit');
+	window.location = './tutor.php';
 };
 
 var logout = function() {
-	var form = $('#logout_form');
-	form.attr('action', './../common/logout.php');
-	form.trigger('submit');
+	window.location = './../common/logout.php';
 };

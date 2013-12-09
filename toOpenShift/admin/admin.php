@@ -1,4 +1,10 @@
 <?php
+/*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	This page is the overview on which the user lands if they are an admin.  It simply contains buttons to the various tools available to admins.
+*/
+
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();
 
@@ -32,10 +38,11 @@ if(r==true)
 <?php
 	//the logout bar
 	echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
+	echo "<br><br><a class='login' target='blank' href='admin_help.html'>Help</a>";
 
 	echo "<button type='button' onclick='goToSetHours()'>Set Writing Center Hours</button><br>";
 	echo "<button type='button' onclick='goToEditEmployees()'>Add/Edit/Remove Employees</button><br>";
-	echo "<button type='button' onclick='goToRequests()'>View All Requests</button><br>";
+	echo "<button type='button' onclick='goToRequests()'>Set Schedules</button><br>";
 	echo "<button type='button' onclick='goToShowPrefs()'>View All Preferences</button><br>";
 	echo "<button type='button' onclick='goToShowActual()'>View Master Schedule</button><br>";
 	echo "<button type='button' onclick='confirmAlg()'>Run Scheduling Algorithm</button<br>";
