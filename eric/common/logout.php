@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST MODIFIED: 12/8/2013
 	This page is linked to whenever a user clicks logout. It expires their cookie and deletes the session before returning them to the login page.
 */
 

@@ -1,7 +1,9 @@
-$(document).ready(function() {
 /*
+	WRITTEN BY: Eric JOnes
+	Last Edited: 12/8/2013
 	This script updates the display, but no user interactio nis available here so nothing else needs to happen
 */
+$(document).ready(function() {
 
 	//create the table for viewing current hours
 	var table = $("<table></table>");

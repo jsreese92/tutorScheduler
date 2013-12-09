@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST MODIFIED: 12/8/2013
 	This file is called when the UNC onyen authenticator returns.  It compares the pid sent to the server via POST with the pid given by the UNC authenticator.  If they match it checks
 	if the pid is listed in the employee database, and if so it starts the session and generates a security cookie for the user before forwarding them to the appropriate landing page.
 */

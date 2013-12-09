@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This script is called via AJAX and returns the number of people currently working in greenlaw for each shift. It could and possibly should be combined with getSASBNumbers so that both
 	sets can be returned in a single AJAX request, but this was the first ajax I had ever worked with, so I wasn't really sure what I was doing. By the time I got better at it, we had run
 	out of time at the end of the semester and couldn't make the updates. The system as it stands works fine, but is a bit slower than it needs to be.

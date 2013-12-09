@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This script is called via AJAX and either returns the indicated tutor's schedule, or updates the tutor's schedule depending on whther it comes via POST or GET.
 */
 

@@ -1,9 +1,10 @@
-$(document).ready(function() {
 /*
-	This is the only AJAX script in the app. When a user clicks on a tutor, it fires off a request to get their information and fills out everything when it returns.
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
+	This is the only AJAX script in the app. When a user clicks on a tutor, it fires off a request to get their information and fills out everything when it returns. Each function should
+	be self-explanatory, and the variable names are explicit.
 */
-
-	
+$(document).ready(function() {	
 	//create the table for viewing current schedule
 	var current_schedule_div = $('div#tutor_schedule');
 	

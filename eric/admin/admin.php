@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This page is the overview on which the user lands if they are an admin.  It simply contains buttons to the various tools available to admins.
 */
 

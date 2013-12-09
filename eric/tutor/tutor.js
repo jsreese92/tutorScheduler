@@ -1,4 +1,6 @@
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This script simply forwards users to the appropriate page when buttons are clicked
 */
 

@@ -1,5 +1,7 @@
 $(document).ready(function () {
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This script validates whatever the user enters before allowing the php script to run, and adds the appropiate message (success or error) if the user just updated something
 */
 

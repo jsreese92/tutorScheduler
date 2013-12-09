@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST MODIFIED: 12/8/2013
 	This page is called whenever a user lands on a new page or an ajax request is fired off. It checks the cookie to ensure that the user is in fact logged in with a valid login, and
 	if so it adds more time to the cookie and returns, else it loops them back to the login page and exits the script so nothing can be changed at all. It is called at the top of every
 	page.

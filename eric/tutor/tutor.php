@@ -1,7 +1,10 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This page is simply the overview page for tutors on which users land when they login properly. It contains links to the various tools available to tutors.
 */
+
 
 	include "./../common/session_validator.php";
 	$con = getDatabaseConnection();

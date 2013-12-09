@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This script is called via AJAX and returns the comments for whatever tutor was indicated.
 */
 

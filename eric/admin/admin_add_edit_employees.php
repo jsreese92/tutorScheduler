@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This page is used by the admins to change employees. It works by checking what variables were posted to the server and doing the appropriate action, ie if the user sent a new pid
 	then it creates a new user.  
 */

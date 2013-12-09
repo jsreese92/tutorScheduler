@@ -1,5 +1,7 @@
 <?php
 /*
+	WRITTEN BY: Eric Jones
+	LAST EDITED: 12/8/2013
 	This script checks what was posted and if the user just submitted new hours, it updates the database with the new requests and prints the appropriate message. When the page loads it
 	prints a table of the tutor's current requests and the center's hours which the javascript will use to fill out the visible table accordingly.
 */

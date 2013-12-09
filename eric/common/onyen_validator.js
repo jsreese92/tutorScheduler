@@ -1,4 +1,6 @@
 /*
+	WRITTEN BY: Eric Jones
+	LAST MODIFIED: 12/8/2013
 	This script simply forwards the user to wherever the PHP script of the same name has decided they should go
 */
 
