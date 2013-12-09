@@ -36,7 +36,7 @@ if(r==true)
 <?php
 	//the logout bar
 	echo "<strong class='login'>Currently logged in as " . $employee_info[1] . " " . $employee_info[2] . ". <button type='button' onclick='logout()'>Log Out</button></strong>";
-	echo "<br><br><a class='login' href='admin_help.html'>Help</a>";
+	echo "<br><br><a class='login' target='blank' href='admin_help.html'>Help</a>";
 
 	echo "<button type='button' onclick='goToSetHours()'>Set Writing Center Hours</button><br>";
 	echo "<button type='button' onclick='goToEditEmployees()'>Add/Edit/Remove Employees</button><br>";
