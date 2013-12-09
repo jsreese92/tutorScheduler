@@ -1,4 +1,7 @@
 <?php
+// This program populates a table of preferences for tutors obtained from the
+// mySql database. Written by Nic Abashian.
+
 // Create connection
 $con=mysqli_connect();
 

@@ -1,4 +1,7 @@
 <?php
+// This program reads from the mySql database and populates a table for 
+// tutors currently working in Greenlaw and SASB. Written by Nic Abashian
+
 // Create connection
 $con=mysqli_connect();
 
